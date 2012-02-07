@@ -31,10 +31,10 @@ Vagrant::Config.run do |config|
       node.vm.forward_port 443, 2443
       node.vm.customize([ "modifyvm", :id, "--memory", "1024" ])
     end
-  }.merge(node_profiles[:debian])
+  }.merge(node_profile[:debian])
 
-  nodes << {:name => :agent1, :role => :agent}.merge(node_profiles[:centos])
-  #nodes[:agent2] = {:role => :agent}.merge(node_profiles[:ubuntu])
+  nodes << {:name => :agent1, :role => :agent}.merge(node_profile[:centos])
+  #nodes[:agent2] = {:role => :agent}.merge(node_profile[:ubuntu])
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
