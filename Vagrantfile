@@ -62,7 +62,7 @@ Vagrant::Config.run do |config|
   ##############################################################################
 
   # Generate a list of nodes with static IP addresses
-  hostsfile = nodes.select {|h| h[:address]}.map {|h| %{#{h[:address]} #{h[:name]}}}
+  hostsfile = nodes.select {|h| h[:address]}.map {|h| %{#{h[:address]} #{h[:name]}}}.join("\\\n")
 
   nodes.each do |attributes|
     config.vm.define attributes[:name] do |node|
