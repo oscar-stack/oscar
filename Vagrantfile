@@ -28,8 +28,17 @@ Vagrant::Config.run do |config|
     :role    => :master,
     :address => "10.10.1.2",
     :block   => lambda do |node|
+
+      # Enable port forwarding for the enterprise console
       node.vm.forward_port 443, 2443
+
+      # Boost RAM for the master so that activemq doesn't asplode
       node.vm.customize([ "modifyvm", :id, "--memory", "1024" ])
+
+      # Enable autosigning on the master
+      node.vm.provision :shell do |shell|
+        shell.inline = %{echo '*' > /etc/puppetlabs/puppet/autosign.conf}
+      end
     end
   }.merge(node_profile[:debian])
 
