@@ -24,9 +24,7 @@ Vagrant::Config.run do |config|
     },
   }
 
-  nodes = []
-
-  nodes << {
+  pe_master = {
     :name    => 'pe-master',
     :role    => :master,
     :address => "10.10.1.2",
@@ -42,10 +40,16 @@ Vagrant::Config.run do |config|
       node.vm.provision :shell do |shell|
         shell.inline = %{echo '*' > /etc/puppetlabs/puppet/autosign.conf}
       end
+
+      # Map master manifests and modules dir to the folders in the vagrant dir
+      config.vm.share_folder 'manifests', '/etc/puppetlabs/puppet/manifests', './manifests', :fmode => '644', :dmode => '755'
+      config.vm.share_folder 'modules', '/etc/puppetlabs/puppet/manifests', './modules', :fmode => '644', :dmode => '755'
     end
   }.merge(node_profile[:debian])
 
-  nodes << {:name => :agent1, :role => :agent}.merge(node_profile[:centos])
+  agent1 = {:name => :agent1, :role => :agent}.merge(node_profile[:centos])
+
+  nodes = [pe_master, agent1]
   #nodes[:agent2] = {:role => :agent}.merge(node_profile[:ubuntu])
 
   # The url from where the 'config.vm.box' box will be fetched if it
@@ -54,11 +58,6 @@ Vagrant::Config.run do |config|
 
   # Boot with a GUI so you can see the screen. (Default is headless)
   # config.vm.boot_mode = :gui
-
-  # Share an additional folder to the guest VM. The first argument is
-  # an identifier, the second is the path on the guest to mount the
-  # folder, and the third is the path on the host to the actual folder.
-  # config.vm.share_folder "v-data", "/vagrant_data", "../data"
 
   ##############################################################################
   # HERE BE DRAGONS
