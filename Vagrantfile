@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-PE_VERSION = "2.0.1"
+PE_VERSION = "2.0.0"
 INSTALLER_PATH = "/vagrant/puppet-enterprise-#{PE_VERSION}-all/puppet-enterprise-installer"
 
 Vagrant::Config.run do |config|
