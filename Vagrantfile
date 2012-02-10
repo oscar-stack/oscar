@@ -81,7 +81,7 @@ Vagrant::Config.run do |config|
 
       # Install PE
       node.vm.provision :shell do |shell|
-        shell.inline = "#{INSTALLER_PATH} -D -a /tmp/answers.txt -l /tmp/puppet-enterprise-installer.log"
+        shell.inline = "#{INSTALLER_PATH} -a /tmp/answers.txt -l /tmp/puppet-enterprise-installer.log"
       end
 
       # Run any node specific blocks
