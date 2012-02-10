@@ -9,14 +9,17 @@ Vagrant::Config.run do |config|
   node_profile = {
     :debian => {
       :boxname   => 'debian-6.0.3-i386',
+      :boxurl    => 'http://faro.puppetlabs.lan/insta-pe/debian-6.0.3-i386.box',
       :installer => 'debian-6-i386',
     },
     :centos => {
       :boxname   => 'centos-5.7-i386',
+      :boxurl    => 'http://faro.puppetlabs.lan/insta-pe/centos-5.7-i386.box',
       :installer => 'el-5-i386',
     },
     :ubuntu => {
       :boxname   => 'ubuntu-10.04.2-server-i386',
+      :boxurl    => 'http://faro.puppetlabs.lan/insta-pe/ubuntu-10.04.2-server-i386.box',
       :installer => 'ubuntu-10.04-i386',
     },
   }
@@ -66,10 +69,13 @@ Vagrant::Config.run do |config|
 
   nodes.each do |attributes|
     config.vm.define attributes[:name] do |node|
-      node.vm.box = attributes[:boxname]
+      node.vm.box    = attributes[:boxname]
+
+      node.vm.boxurl = attributes[:boxurl] if attributes[:boxurl]
       node.vm.network :hostonly, attributes[:address] if attributes[:address]
 
       # Hack in faux DNS
+      # This is necessary for puppet enterprise installation
       node.vm.provision :shell do |shell|
         shell.inline = %{grep "#{hostsfile}" /etc/hosts || echo #{hostsfile} >> /etc/hosts}
       end
@@ -88,5 +94,4 @@ Vagrant::Config.run do |config|
       instance_exec(node, &attributes[:block]) if attributes[:block]
     end
   end
-
 end
