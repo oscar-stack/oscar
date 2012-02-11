@@ -1,4 +1,3 @@
-# -*- mode: ruby -*-
 # vi: set ft=ruby :
 
 PE_VERSION = "2.0.0"
@@ -9,17 +8,17 @@ Vagrant::Config.run do |config|
   node_profile = {
     :debian => {
       :boxname   => 'debian-6.0.3-i386',
-      :boxurl    => 'http://faro.puppetlabs.lan/insta-pe/debian-6.0.3-i386.box',
+      :box_url    => 'http://faro.puppetlabs.lan/insta-pe/debian-6.0.3-i386.box',
       :installer => 'debian-6-i386',
     },
     :centos => {
       :boxname   => 'centos-5.7-i386',
-      :boxurl    => 'http://faro.puppetlabs.lan/insta-pe/centos-5.7-i386.box',
+      :box_url    => 'http://faro.puppetlabs.lan/insta-pe/centos-5.7-i386.box',
       :installer => 'el-5-i386',
     },
     :ubuntu => {
       :boxname   => 'ubuntu-10.04.2-server-i386',
-      :boxurl    => 'http://faro.puppetlabs.lan/insta-pe/ubuntu-10.04.2-server-i386.box',
+      :box_url    => 'http://faro.puppetlabs.lan/insta-pe/ubuntu-10.04.2-server-i386.box',
       :installer => 'ubuntu-10.04-i386',
     },
   }
@@ -43,7 +42,7 @@ Vagrant::Config.run do |config|
 
       # Map master manifests and modules dir to the folders in the vagrant dir
       config.vm.share_folder 'manifests', '/etc/puppetlabs/puppet/manifests', './manifests', :fmode => '644', :dmode => '755'
-      config.vm.share_folder 'modules', '/etc/puppetlabs/puppet/manifests', './modules', :fmode => '644', :dmode => '755'
+      config.vm.share_folder 'modules', '/etc/puppetlabs/puppet/modules', './modules', :fmode => '644', :dmode => '755'
     end
   }.merge(node_profile[:debian])
 
@@ -51,13 +50,6 @@ Vagrant::Config.run do |config|
 
   nodes = [pe_master, agent1]
   #nodes[:agent2] = {:role => :agent}.merge(node_profile[:ubuntu])
-
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-  # config.vm.box_url = "http://domain.com/path/to/above.box"
-
-  # Boot with a GUI so you can see the screen. (Default is headless)
-  # config.vm.boot_mode = :gui
 
   ##############################################################################
   # HERE BE DRAGONS
@@ -70,11 +62,14 @@ Vagrant::Config.run do |config|
     config.vm.define attributes[:name] do |node|
       node.vm.box    = attributes[:boxname]
 
-      node.vm.boxurl = attributes[:boxurl] if attributes[:boxurl]
+      # Add in optional per-node configuration
+      node.vm.box_url = attributes[:box_url] if attributes[:box_url]
       node.vm.network :hostonly, attributes[:address] if attributes[:address]
+      node.vm.boot_mode = attributes[:gui] if attributes[:gui]
 
       # Hack in faux DNS
-      # This is necessary for puppet enterprise installation
+      # Puppet enterprise requires something resembling functioning DNS to
+      # be installed correctly
       node.vm.provision :shell do |shell|
         shell.inline = %{grep "#{hostsfile}" /etc/hosts || echo #{hostsfile} >> /etc/hosts}
       end
