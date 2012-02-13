@@ -1,27 +1,16 @@
 # vi: set ft=ruby :
+require 'yaml'
 
-PE_VERSION = "2.0.0"
-INSTALLER_PATH = "/vagrant/puppet-enterprise-#{PE_VERSION}-all/puppet-enterprise-installer"
+# Load config
+config = YAML::load(File.read('config.yaml'))
+
+p config
+
+node_profile   = config["node_profiles"]
+PE_VERSION     = config["pe"]["version"]
+INSTALLER_PATH = config["pe"]["installer_path"] % PE_VERSION
 
 Vagrant::Config.run do |config|
-
-  node_profile = {
-    :debian => {
-      :boxname   => 'debian-6.0.3-i386',
-      :box_url    => 'http://faro.puppetlabs.lan/insta-pe/debian-6.0.3-i386.box',
-      :installer => 'debian-6-i386',
-    },
-    :centos => {
-      :boxname   => 'centos-5.7-i386',
-      :box_url    => 'http://faro.puppetlabs.lan/insta-pe/centos-5.7-i386.box',
-      :installer => 'el-5-i386',
-    },
-    :ubuntu => {
-      :boxname   => 'ubuntu-10.04.2-server-i386',
-      :box_url    => 'http://faro.puppetlabs.lan/insta-pe/ubuntu-10.04.2-server-i386.box',
-      :installer => 'ubuntu-10.04-i386',
-    },
-  }
 
   pe_master = {
     :name    => 'pe-master',
@@ -48,10 +37,10 @@ Vagrant::Config.run do |config|
       end
 
     end
-  }.merge(node_profile[:debian])
+  }.merge(node_profile["debian"])
 
-  agent1 = {:name => :agent1, :role => :agent}.merge(node_profile[:centos])
-  agent2 = {:name => :agent2, :role => :agent}.merge(node_profile[:ubuntu])
+  agent1 = {:name => :agent1, :role => :agent}.merge(node_profile["centos"])
+  agent2 = {:name => :agent2, :role => :agent}.merge(node_profile["ubuntu"])
 
   nodes = [pe_master, agent1, agent2]
   #nodes[:agent2] = {:role => :agent}.merge(node_profile[:ubuntu])
