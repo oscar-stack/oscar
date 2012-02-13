@@ -47,15 +47,13 @@ Vagrant::Config.run do |config|
         shell.inline = %{echo '*' > /etc/puppetlabs/puppet/autosign.conf}
       end
 
-      # Map master manifests and modules dir to the folders in the vagrant dir
-      config.vm.share_folder 'manifests', '/etc/puppetlabs/puppet/manifests', './manifests', :fmode => '644', :dmode => '755'
-      config.vm.share_folder 'modules', '/etc/puppetlabs/puppet/modules', './modules', :fmode => '644', :dmode => '755'
     end
   }.merge(node_profile[:debian])
 
   agent1 = {:name => :agent1, :role => :agent}.merge(node_profile[:centos])
+  agent2 = {:name => :agent2, :role => :agent}.merge(node_profile[:ubuntu])
 
-  nodes = [pe_master, agent1]
+  nodes = [pe_master, agent1, agent2]
   #nodes[:agent2] = {:role => :agent}.merge(node_profile[:ubuntu])
 
   ##############################################################################
