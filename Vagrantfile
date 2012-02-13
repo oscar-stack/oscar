@@ -28,6 +28,13 @@ Vagrant::Config.run do |config|
     :role    => :master,
     :address => "10.10.1.2",
     :block   => lambda do |node|
+      # Map master manifests and modules dir to the folders in the vagrant dir
+      config.vm.share_folder 'manifests', '/etc/puppetlabs/puppet/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
+      config.vm.share_folder 'modules', '/etc/puppetlabs/puppet/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
+      # Enable autosigning on the master
+      node.vm.provision :shell do |shell|
+        shell.inline = %{chmod -R go+rX /etc/puppetlabs/puppet/manifests /etc/puppetlabs/puppet/modules}
+      end
 
       # Enable port forwarding for the enterprise console
       node.vm.forward_port 443, 2443
