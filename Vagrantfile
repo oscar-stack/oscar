@@ -4,8 +4,6 @@ require 'yaml'
 # Load config
 config = YAML::load(File.read('config.yaml'))
 
-p config
-
 node_profile   = config["node_profiles"]
 PE_VERSION     = config["pe"]["version"]
 INSTALLER_PATH = config["pe"]["installer_path"] % PE_VERSION
