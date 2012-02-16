@@ -2,7 +2,12 @@
 require 'yaml'
 
 # Load config
-config = YAML::load(File.read('config.yaml'))
+yaml_config = File.join(File.dirname(__FILE__), "config.yaml")
+config = nil
+
+File.open(yaml_config) do |fd|
+  config = YAML.load(fd.read)
+end
 
 nodes          = config["nodes"]
 profiles       = config["profiles"]
