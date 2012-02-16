@@ -4,27 +4,26 @@ require 'yaml'
 # Load config
 config = YAML::load(File.read('config.yaml'))
 
-profiles   = config["profiles"]
+nodes          = config["nodes"]
+profiles       = config["profiles"]
 PE_VERSION     = config["pe"]["version"]
 INSTALLER_PATH = config["pe"]["installer_path"] % PE_VERSION
 
+nodes.each do |node|
+  profile = node["profile"]
+  node.merge! profiles[profile]
+end
+
 Vagrant::Config.run do |config|
 
-  pe_master = {
-    "name"    => 'pe-master',
-    "role"    => "master",
-    "address" => "10.10.1.2",
-  }.merge(profiles["debian"])
-
-  agent1 = {"name" => :agent1, "role" => :agent}.merge(profiles["centos"])
-  agent2 = {"name" => :agent2, "role" => :agent}.merge(profiles["ubuntu"])
-
-  nodes = [pe_master, agent1, agent2]
-
+  # This is an extension of the common node definition, as it makes provisions
+  # for customizing the master for more seamless interaction with the base
+  # system
   configure_master = lambda do |node, attributes|
     # Map master manifests and modules dir to the folders in the vagrant dir
     config.vm.share_folder 'manifests', '/etc/puppetlabs/puppet/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
     config.vm.share_folder 'modules', '/etc/puppetlabs/puppet/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
+
     # Enable autosigning on the master
     node.vm.provision :shell do |shell|
       shell.inline = %{chmod -R go+rX /etc/puppetlabs/puppet/manifests /etc/puppetlabs/puppet/modules}
@@ -42,13 +41,10 @@ Vagrant::Config.run do |config|
     end
   end
 
-  ##############################################################################
-  # HERE BE DRAGONS
-  ##############################################################################
-
   # Generate a list of nodes with static IP addresses
-  hostsfile = nodes.select {|h| h["address"]}.map {|h| %{#{h["address"]} #{h["name"]}}}.join("\\\n")
+  hosts_entries = nodes.select {|h| h["address"]}.map {|h| %{#{h["address"]} #{h["name"]}}}
 
+  # Tweak each host for Puppet Enterprise, and then install PE itself.
   nodes.each do |attributes|
     config.vm.define attributes["name"] do |node|
       node.vm.box    = attributes["boxname"]
@@ -61,8 +57,10 @@ Vagrant::Config.run do |config|
       # Hack in faux DNS
       # Puppet enterprise requires something resembling functioning DNS to
       # be installed correctly
-      node.vm.provision :shell do |shell|
-        shell.inline = %{grep "#{hostsfile}" /etc/hosts || echo #{hostsfile} >> /etc/hosts}
+      hosts_entries.each do |entry|
+        node.vm.provision :shell do |shell|
+          shell.inline = %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
+        end
       end
 
       # Customize the answers file for each node
