@@ -11,8 +11,8 @@ end
 
 nodes          = config["nodes"]
 profiles       = config["profiles"]
-PE_VERSION     = config["pe"]["version"]
-INSTALLER_PATH = config["pe"]["installer_path"] % PE_VERSION
+pe_version     = config["pe"]["version"]
+installer_path = config["pe"]["installer_path"] % pe_version
 
 nodes.each do |node|
   profile = node["profile"]
@@ -75,7 +75,7 @@ Vagrant::Config.run do |config|
 
       # Install PE
       node.vm.provision :shell do |shell|
-        shell.inline = "#{INSTALLER_PATH} -a /tmp/answers.txt -l /tmp/puppet-enterprise-installer.log"
+        shell.inline = "#{installer_path} -a /tmp/answers.txt -l /tmp/puppet-enterprise-installer.log"
       end
 
       if attributes["role"] == "master"
