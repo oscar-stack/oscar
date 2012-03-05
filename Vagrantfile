@@ -75,7 +75,7 @@ Vagrant::Config.run do |config|
 
       # Install PE
       node.vm.provision :shell do |shell|
-        shell.inline = "#{installer_path} -a /tmp/answers.txt -l /tmp/puppet-enterprise-installer.log"
+        shell.inline = "#{installer_path} -a /tmp/answers.txt -l /tmp/puppet-enterprise-installer.log || true"
       end
 
       if attributes["role"] == "master"
