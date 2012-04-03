@@ -34,9 +34,6 @@ Vagrant::Config.run do |config|
       shell.inline = %{chmod -R go+rX /etc/puppetlabs/puppet/manifests /etc/puppetlabs/puppet/modules}
     end
 
-    # Enable port forwarding for the enterprise console
-    node.vm.forward_port 443, 2443
-
     # Boost RAM for the master so that activemq doesn't asplode
     node.vm.customize([ "modifyvm", :id, "--memory", "1024" ])
 
@@ -53,6 +50,10 @@ Vagrant::Config.run do |config|
   nodes.each do |attributes|
     config.vm.define attributes["name"] do |node|
       node.vm.box    = attributes["boxname"]
+
+      attributes["forwards"].each do |(src, dest)|
+        node.vm.forward_port src, dest
+      end if attributes["forwards"] # <-- I am a monster
 
       # Add in optional per-node configuration
       node.vm.box_url = attributes["box_url"] if attributes["box_url"]
