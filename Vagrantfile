@@ -70,7 +70,7 @@ Vagrant::Config.run do |config|
 
       # Customize the answers file for each node
       node.vm.provision :shell do |shell|
-        shell.inline = %{sed -e 's/%%CERTNAME%%/#{attributes["name"]}/' < /vagrant/answers/#{attributes["role"]}.txt > /tmp/answers.txt}
+        shell.inline = %{sed -e 's/%%CERTNAME%%/#{attributes["name"]}/' < /vagrant/answers/#{attributes["role"]}-#{pe_version}.txt > /tmp/answers.txt}
       end
 
       # Install PE
