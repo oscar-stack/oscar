@@ -18,8 +18,10 @@ begin
   nodes.each do |node|
     profile = node["profile"]
     node.merge! profiles[profile]
-    node["pe_version"] = pe_version
-    node["installer_path"] = installer_path
+
+    # Add in default values for pe_version
+    node["pe_version"]     ||= pe_version
+    node["installer_path"] ||= installer_path
   end
 rescue => e
   raise "Malformed or missing config.yaml: #{e}"
@@ -30,13 +32,32 @@ end
 # system
 def provision_master(config, node, attributes)
 
-  # Map master manifests and modules dir to the folders in the vagrant dir
-  config.vm.share_folder 'manifests', '/etc/puppetlabs/puppet/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
-  config.vm.share_folder 'modules', '/etc/puppetlabs/puppet/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
-
-  # Enable autosigning on the master
+  # Update manifestdir to point to /vagrant mount
   node.vm.provision :shell do |shell|
-    shell.inline = %{chmod -R go+rX /etc/puppetlabs/puppet/manifests /etc/puppetlabs/puppet/modules}
+    shell.inline = <<-EOT
+sed -i '
+2 {
+/manifest/ !i\
+    manifestdir = /vagrant/manifests
+}
+' /etc/puppetlabs/puppet/puppet.conf
+EOT
+  end
+
+  # Update modulepath to include /vagrant mount
+  node.vm.provision :shell do |shell|
+    shell.inline = <<-EOT
+sed -i '
+/modulepath/ {
+/vagrant/ !s,$,:/vagrant/manifests,
+}
+' /etc/puppetlabs/puppet/puppet.conf
+EOT
+  end
+
+  # Update modulepath to include /vagrant mount
+  node.vm.provision :shell do |shell|
+    shell.inline = %{echo "# /etc/puppetlabs/puppet/manifests is not used; see /vagrant/manifests." > /etc/puppetlabs/puppet/manifests/site.pp}
   end
 
   # Boost RAM for the master so that activemq doesn't asplode
@@ -53,6 +74,7 @@ def configure_node(config, node, attributes)
 
   node.vm.box = attributes["boxname"]
 
+  # Apply all specified port forwards
   attributes["forwards"].each do |(src, dest)|
     node.vm.forward_port src, dest
   end if attributes["forwards"] # <-- I am a monster
