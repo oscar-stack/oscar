@@ -62,9 +62,8 @@ sed -i '
 EOT
   end
 
-  # Update modulepath to include /vagrant mount
   node.vm.provision :shell do |shell|
-    shell.inline = %{echo "# /etc/puppetlabs/puppet/manifests is not used; see /vagrant/manifests." > /etc/puppetlabs/puppet/manifests/site.pp}
+    shell.inline = %{echo "# /etc/puppetlabs/puppet/manifests is not used; see /manifests." > /etc/puppetlabs/puppet/manifests/site.pp}
   end
 
   # Boost RAM for the master so that activemq doesn't asplode
