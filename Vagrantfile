@@ -32,13 +32,20 @@ end
 # system
 def provision_master(config, node, attributes)
 
+  # Manifests and modules need to be mounted on the master via shared folders,
+  # but the default /vagrant mount has permissions and ownership that conflicts
+  # with the master and pe-puppet. We mount these folders separately with
+  # loosened permissions.
+  config.vm.share_folder 'manifests', '/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
+  config.vm.share_folder 'modules', '/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
+
   # Update manifestdir to point to /vagrant mount
   node.vm.provision :shell do |shell|
     shell.inline = <<-EOT
 sed -i '
 2 {
 /manifest/ !i\
-    manifestdir = /vagrant/manifests
+    manifestdir = /manifests
 }
 ' /etc/puppetlabs/puppet/puppet.conf
 EOT
@@ -49,7 +56,7 @@ EOT
     shell.inline = <<-EOT
 sed -i '
 /modulepath/ {
-/vagrant/ !s,$,:/vagrant/manifests,
+/vagrant/ !s,$,:/modules,
 }
 ' /etc/puppetlabs/puppet/puppet.conf
 EOT
