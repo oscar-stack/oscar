@@ -86,7 +86,7 @@ def configure_node(config, node, attributes)
   end if attributes["forwards"] # <-- I am a monster
 
   # Add in optional per-node configuration
-  node.vm.box_url = attributes["box_url"] if attributes["box_url"]
+  node.vm.box_url = attributes["boxurl"] if attributes["boxurl"]
   node.vm.network :hostonly, attributes["address"] if attributes["address"]
   node.vm.boot_mode = attributes[:gui] if attributes[:gui]
 end
