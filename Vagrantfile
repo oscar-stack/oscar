@@ -103,6 +103,11 @@ def provision_node(config, node, attributes)
     end
   end
 
+  # Set the machine hostname
+  node.vm.provision :shell do |shell|
+    shell.inline = %{hostname #{attributes["name"]}}
+  end
+
   # Customize the answers file for each node
   node.vm.provision :shell do |shell|
     shell.inline = %{sed -e 's/%%CERTNAME%%/#{attributes["name"]}/' < /vagrant/answers/#{attributes["role"]}.txt > /tmp/answers.txt}
