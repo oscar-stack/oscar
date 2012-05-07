@@ -1,4 +1,4 @@
-Insta-PE
+Instapants
 ========
 
 Create a full Puppet Enterprise environment from vagrant base boxes.
