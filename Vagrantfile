@@ -134,6 +134,10 @@ def install_pe(config, node, attributes)
     shell.inline = %{sed -e 's/%%CERTNAME%%/#{attributes["name"]}/' < /vagrant/answers/#{attributes["role"]}.txt > /tmp/answers.txt}
   end
 
+  # If the PE version is 0.0.0, bypass puppet installation.
+  # This could easily make later provisioning fail.
+  return if attributes['pe']['version'] == '0.0.0'
+
   # Assemble the installer command
   fragments = []
   fragments << "2>&1"
