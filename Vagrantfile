@@ -12,19 +12,29 @@ begin
 
   nodes          = config["nodes"]
   profiles       = config["profiles"]
-  pe_version     = config["pe"]["version"]
-  installer_path = config["pe"]["installer_path"] % pe_version
 
   nodes.each do |node|
-    profile = node["profile"]
-    node.merge! profiles[profile]
 
-    # Add in default values for pe_version
-    node["pe_version"]     ||= pe_version
-    node["installer_path"] ||= installer_path
+    # Set default PE configuration, and allow node overriding of these values
+    defaults = {"pe" => config['pe']}
+
+    node.merge!(defaults) do |key, oldval, newval|
+
+      if oldval.is_a? Hash
+        newval.merge oldval
+      else
+        warn "Tried to merge #{key} => [#{oldval}, #{newval}], wrong times. Using old val."
+        oldval
+      end
+    end
+
+    profile  = node["profile"]
+    node.merge! profiles[profile]
   end
 rescue => e
-  raise "Malformed or missing config.yaml: #{e}"
+  puts "Malformed or missing config.yaml: #{e}"
+  puts e.backtrace
+  exit!(1)
 end
 
 # This is an extension of the common node definition, as it makes provisions
@@ -113,15 +123,31 @@ def provision_node(config, node, attributes)
   node.vm.provision :shell do |shell|
     shell.inline = %{domainname puppetlabs.pants}
   end
+end
+
+def install_pe(config, node, attributes)
 
   # Customize the answers file for each node
   node.vm.provision :shell do |shell|
     shell.inline = %{sed -e 's/%%CERTNAME%%/#{attributes["name"]}/' < /vagrant/answers/#{attributes["role"]}.txt > /tmp/answers.txt}
   end
 
+  # Assemble the installer command
+  fragments = []
+  fragments << "2>&1"
+  fragments << attributes['pe']['installer']['executable']
+  fragments << '-a /tmp/answers.txt'
+  fragments << attributes['pe']['installer']['args'].join(' ')
+
+  installer_cmd = fragments.join(' ').gsub(':version', attributes['pe']['version'])
+
   # Install PE
   node.vm.provision :shell do |shell|
-    shell.inline = "#{attributes["installer_path"]} -a /tmp/answers.txt -l /tmp/puppet-enterprise-installer.log || true"
+    shell.inline = <<-EOT
+if ! [ -f /opt/pe_version ]; then
+    #{installer_cmd}
+fi
+    EOT
   end
 end
 
@@ -138,6 +164,7 @@ Vagrant::Config.run do |config|
 
       configure_node(config, node, attributes)
       provision_node(config, node, attributes)
+      install_pe(config, node, attributes)
 
       if attributes["role"].match /master/
         provision_master(config, node, attributes)
