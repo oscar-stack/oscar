@@ -40,11 +40,18 @@ have something like this:
     ---
     # Configuration settings for Puppet Enterprise.
     pe:
-      # The version of PE to install
+      # The version of PE to install. Using a version of 0.0.0 disables the installation
       version: 2.5.1
-      # The location of the installer. It's recommended that you use this value.
-      # This is a docstring format, so %s will be replaced with the version variable above
       installer_path: /vagrant/files/puppet-enterprise-%s-all/puppet-enterprise-installer
+      installer:
+        # The program to execute to run the PE install. You can insert 'bash -x' to do a trace
+        # of the installation. Any string containing :version will be replaced with the current version.
+        executable: /vagrant/files/puppet-enterprise-:version-all/puppet-enterprise-installer
+        args:
+          # Additional arguments to pass to the installer
+          - "-l /root/puppet-enterprise-installer.log"
+          - "-D"
+          - "| tee /root/installer-all.log"
 
     # Profiles are generic configurations for a basebox
     profiles:
