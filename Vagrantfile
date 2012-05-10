@@ -39,7 +39,8 @@ def provision_master(config, node, attributes)
   config.vm.share_folder 'manifests', '/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
   config.vm.share_folder 'modules', '/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
 
-  # Update manifestdir to point to /vagrant mount
+  # Update puppet.conf to add the manifestdir directive to point to the
+  # /manifests mount, if the directive isn't already present.
   node.vm.provision :shell do |shell|
     shell.inline = <<-EOT
 sed -i '
@@ -51,7 +52,8 @@ sed -i '
 EOT
   end
 
-  # Update modulepath to include /vagrant mount
+  # Update puppet.conf to add the modulepath directive to point to the
+  # /module mount, if it hasn't already been set.
   node.vm.provision :shell do |shell|
     shell.inline = <<-EOT
 sed -i '
