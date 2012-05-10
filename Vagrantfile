@@ -74,6 +74,8 @@ sed -i '
 EOT
   end
 
+  # Rewrite the olde site.pp config since it's not used, and warn people
+  # about this.
   node.vm.provision :shell do |shell|
     shell.inline = %{echo "# /etc/puppetlabs/puppet/manifests is not used; see /manifests." > /etc/puppetlabs/puppet/manifests/site.pp}
   end
