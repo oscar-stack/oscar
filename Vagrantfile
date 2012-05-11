@@ -123,7 +123,7 @@ def provision_node(config, node, attributes)
   end
 
   node.vm.provision :shell do |shell|
-    shell.inline = %{domainname puppetlabs.pants}
+    shell.inline = %{domainname puppetlabs.test}
   end
 end
 
@@ -147,11 +147,12 @@ def install_pe(config, node, attributes)
 
   installer_cmd = fragments.join(' ').gsub(':version', attributes['pe']['version'])
 
-  # Install PE
+  # Install Puppet Enterprise if it hasn't been installed yet. If the machine
+  # is rebooted then this provisioning step will be skipped.
   node.vm.provision :shell do |shell|
     shell.inline = <<-EOT
 if ! [ -f /opt/pe_version ]; then
-    #{installer_cmd}
+  #{installer_cmd}
 fi
     EOT
   end
