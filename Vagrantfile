@@ -23,7 +23,7 @@ begin
       if oldval.is_a? Hash
         newval.merge oldval
       else
-        warn "Tried to merge #{key} => [#{oldval}, #{newval}], wrong times. Using old val."
+        warn "Tried to merge hash values with #{key} => [#{oldval}, #{newval}], but was not a hash. Using #{oldval}."
         oldval
       end
     end
