@@ -40,4 +40,3 @@ q_puppet_enterpriseconsole_auth_user=console
 
 # pe 2.0 - 2.5 upgrade options
 q_puppet_enterpriseconsole_setup_auth_db=y
-q_upgrade_installation=y
