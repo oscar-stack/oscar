@@ -136,7 +136,11 @@ def install_pe(config, node, attributes)
 
   # If the PE version is 0.0.0, bypass puppet installation.
   # This could easily make later provisioning fail.
-  return if attributes['pe']['version'] == '0.0.0'
+
+  if attributes['pe']['version'].match %r[^0\.0]
+    warn "Requested PE version was set to #{attributes['pe']['version']}; will not automatically install PE"
+    return
+  end
 
   # Assemble the installer command
   fragments = []
