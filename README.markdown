@@ -65,18 +65,19 @@ have something like this:
 
     # Your actual node definitions. This is an array of hashes
     nodes:
-      # name: the name of the node to address with vagrant commands
-      name: master
-      # role: one of (master, agent). Self explanatory.
-      role: master
-      # The name of the profile to use in the previous section.
-      profile: debian
-      # The IP address to assign for the host
-      address: 10.16.1.2
-      # A hash where the keys are VM port names and the values are hypervisor port names. Optional.
-      # You'll want to forward 443 on the master to your hypervisor for access to the PEC.
-      forwards:
-        443: 20443
+      -
+        # name: the name of the node to address with vagrant commands
+        name: master
+        # role: one of (master, agent). Self explanatory.
+        role: master
+        # The name of the profile to use in the previous section.
+        profile: debian
+        # The IP address to assign for the host
+        address: 10.16.1.2
+        # A hash where the keys are VM port names and the values are hypervisor port names. Optional.
+        # You'll want to forward 443 on the master to your hypervisor for access to the PEC.
+        forwards:
+          443: 20443
 
 You can also view the config.yaml.example in this directory.
 
