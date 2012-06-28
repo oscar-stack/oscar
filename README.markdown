@@ -3,31 +3,30 @@ Instapants
 
 Create a full Puppet Enterprise environment from vagrant base boxes.
 
-Requirements
-------------
+Prerequisites
+-------------
 
   * Vagrant 1.0
   * Virtualbox 4.x (4.0 strongly recommended for OSX 10.7)
 
-Necessary Files
----------------
-
-You'll need a config.yaml to specify how to build the environment. Contact your
-friendly neighborhood Puppet support monkey on where this is located. Place
-this file in the insta-pe directory.
-
-You'll also need the extracted universtal installers for Puppet Enterprise.
-Place the extracted installers in insta-pe/files.
-
-insta-pe assumes the you either have all your vagrant boxes already added or
-are hosted on a webserver.
-
 Installation
 ------------
 
-    git clone git://github.com/adrienthebo/insta-pe
-    cd insta-pe
+    git clone git://github.com/adrienthebo/instapants
+    cd instapants
+
+    # You'll need a config.yaml to specify how to build the environment. Contact your
+    # friendly neighborhood Puppet support monkey on where this is located. Place
+    # this file in the insta-pe directory.
     wget http://your.web.server/insta-pe/config.yaml
+
+    # You'll also need the extracted universal installers for Puppet Enterprise.
+    # Place the extracted installers in insta-pe/files.
+    cd instapants/files
+    tar xvf puppet-enterprise-X.Y.Z.tar.gz
+
+    # instapants assumes the you either have all your vagrant boxes already added or
+    # are hosted on a webserver.
     vagrant up
 
 Configuration
