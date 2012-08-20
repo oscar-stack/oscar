@@ -12,8 +12,8 @@ Prerequisites
 Installation
 ------------
 
-    git clone git://github.com/adrienthebo/instapants
-    cd instapants
+    git clone git://github.com/adrienthebo/soupkitchen
+    cd soupkitchen
 
     # You'll need a config.yaml to specify how to build the environment. Contact your
     # friendly neighborhood Puppet support monkey on where this is located. Place
@@ -22,10 +22,10 @@ Installation
 
     # You'll also need the extracted universal installers for Puppet Enterprise.
     # Place the extracted installers in insta-pe/files.
-    cd instapants/files
+    cd soupkitchen/files
     tar xvf puppet-enterprise-X.Y.Z.tar.gz
 
-    # instapants assumes the you either have all your vagrant boxes already added or
+    # soupkitchen assumes the you either have all your vagrant boxes already added or
     # are hosted on a webserver.
     vagrant up
 
