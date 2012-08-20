@@ -20,22 +20,25 @@ class SoupKitchen::Config
     end
   end
 
+  # Recursively load any YAML files contained in the given paths.
   def load_all(*paths)
     paths.flatten.each do |path|
-      p path
       if File.file?(path) and path.match /\.yaml$/
         load_file(path)
       elsif File.directory? path
         load_all Dir["#{path}/*"]
       else
-        puts "#{path} is neither a YAML file nor a directory, ignoring it."
+        warn "#{path} is neither a YAML file nor a directory, ignoring it."
       end
     end
   end
 
+  # Load YAML from a file and merge it into the aggregated YAML
+  #
+  # @raise [TypeError] If the YAML in a given file does not have a hash at top level
   def load_file(filename)
     localdata = YAML.load(File.read(filename))
-    raise "Expected a top level hash from #{filename}, got a #{localdata.class}" unless localdata.is_a? Hash
+    raise TypeError, "Expected a top level hash from #{filename}, got a #{localdata.class}" unless localdata.is_a? Hash
     @data.merge!(localdata)
   end
 
@@ -92,7 +95,6 @@ class SoupKitchen::Config
   def method_missing(meth, *args, &block)
     if @data.respond_to? meth
       args << block if block_given?
-      puts "delegating #{meth}"
       @data.send(meth, args)
     else
       super
