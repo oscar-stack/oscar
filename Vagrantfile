@@ -1,4 +1,6 @@
-# vi: set ft=ruby :
+# lol shim
+$LOAD_PATH << "#{File.dirname(__FILE__)}/lib"
+require 'soupkitchen'
 require 'yaml'
 
 begin
