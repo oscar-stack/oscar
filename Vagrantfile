@@ -5,20 +5,17 @@ require 'yaml'
 
 begin
   # Load config
-  yaml_config = File.join(File.dirname(__FILE__), "config.yaml")
-  config = nil
+  config = SoupKitchen::Config.new('config.yaml', 'config')
 
-  File.open(yaml_config) do |fd|
-    config = YAML.load(fd.read)
-  end
+  p config
 
-  nodes          = config["nodes"]
-  profiles       = config["profiles"]
+  nodes          = config.nodes
+  profiles       = config.profiles
 
   nodes.each do |node|
 
     # Set default PE configuration, and allow node overriding of these values
-    defaults = {"pe" => config['pe']}
+    defaults = {"pe" => config.pe}
 
     node.merge!(defaults) do |key, oldval, newval|
 
