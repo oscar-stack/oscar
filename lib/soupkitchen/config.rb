@@ -43,6 +43,50 @@ class SoupKitchen::Config
   def profiles; @data["profiles"]; end
   def pe;       @data["pe"]; end
 
+  # Generate a full node configuration for a given node
+  #
+  # Provides a data structure that looks like the following:
+  #
+  # <code>
+  # {
+  #   "pe" => {
+  #     "version"   => "x.x.x",
+  #     "installer" => "/command/to/run/installer",
+  #   },
+  #
+  #   "name" => "nodename",
+  #   "role" => "roletype",
+  #   "address" => "ip address",
+  #
+  #   "forwards" => {
+  #     'local port' => 'remote port',
+  #   }
+  #
+  #   "profile" => {
+  #     "boxname" => "box shortname",
+  #     "boxurl"  => "box URL",
+  #   },
+  # }
+  # </code>
+  #
+  # @return [Hash]
+  def node_config(node_data)
+    # Set default PE configuration, and allow node overriding of these values
+    defaults = {"pe" => self.pe}
+    node_data.merge!(defaults) do |key, oldval, newval|
+      if oldval.is_a? Hash
+        newval.merge oldval
+      else
+        warn "Tried to merge hash values with #{key} => [#{oldval}, #{newval}], but was not a hash. Using #{oldval}."
+        oldval
+      end
+    end
+    profile  = node_data["profile"]
+    node_data.merge! profiles[profile]
+
+    node_data
+  end
+
   # Delegate any unknown methods to our data, so we can pretend that we are
   # the parsed YAML config.
   def method_missing(meth, *args, &block)

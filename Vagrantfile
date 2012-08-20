@@ -7,29 +7,11 @@ begin
   # Load config
   config = SoupKitchen::Config.new('config.yaml', 'config')
 
-  p config
 
   nodes          = config.nodes
   profiles       = config.profiles
 
-  nodes.each do |node|
-
-    # Set default PE configuration, and allow node overriding of these values
-    defaults = {"pe" => config.pe}
-
-    node.merge!(defaults) do |key, oldval, newval|
-
-      if oldval.is_a? Hash
-        newval.merge oldval
-      else
-        warn "Tried to merge hash values with #{key} => [#{oldval}, #{newval}], but was not a hash. Using #{oldval}."
-        oldval
-      end
-    end
-
-    profile  = node["profile"]
-    node.merge! profiles[profile]
-  end
+  nodes.map { |node| config.node_config(node) }
 rescue => e
   puts "Malformed or missing config.yaml: #{e}"
   puts e.backtrace
