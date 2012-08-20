@@ -2,6 +2,7 @@
 $LOAD_PATH << "#{File.dirname(__FILE__)}/lib"
 require 'soupkitchen'
 require 'yaml'
+require 'vagrant/config/pe'
 
 begin
   # Load config
