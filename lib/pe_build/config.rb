@@ -1,7 +1,7 @@
 require 'vagrant'
 require 'uri'
 
-class Vagrant::Config::SoupKitchen < Vagrant::Config::Base
+class PEBuild::Config < Vagrant::Config::Base
   attr_writer :download_root
   attr_writer :default_version
   attr_writer :filename
