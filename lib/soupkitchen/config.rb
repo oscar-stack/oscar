@@ -27,8 +27,8 @@ class SoupKitchen::Config
         load_file(path)
       elsif File.directory? path
         load_all Dir["#{path}/*"]
-      else
-        warn "#{path} is neither a YAML file nor a directory, ignoring it."
+      #else
+      #  warn "#{path} is neither a YAML file nor a directory, ignoring it."
       end
     end
   end
