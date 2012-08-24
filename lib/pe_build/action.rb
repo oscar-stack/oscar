@@ -1,16 +1,15 @@
 require 'vagrant'
 require 'vagrant/action/builder'
-require 'pebuild'
+require 'pe_build'
 
 module PEBuild::Action
 end
 
-require 'pebuild/action/download'
-require 'pebuild/action/unpackage'
+require 'pe_build/action/download'
+require 'pe_build/action/unpackage'
 
 builder = Vagrant::Action::Builder.new do
   use PEBuild::Action::Download
-  use PEBuild::Action::Unpackage
 end
 
 Vagrant.actions.register :download_pe_build, builder

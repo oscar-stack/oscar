@@ -1,8 +1,8 @@
 # lol shim
 $LOAD_PATH << "#{File.dirname(__FILE__)}/lib"
-require 'soupkitchen'
+require 'pe_build'
 require 'yaml'
-require 'vagrant/config/pe'
+require 'soupkitchen'
 
 begin
   # Load config

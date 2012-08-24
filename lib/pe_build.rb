@@ -1,7 +1,9 @@
 require 'vagrant'
 
 module PEBuild
-  STORE_PATH = File.join(Vagrant::Environment::DEFAULT_HOME, "pe_builds")
+  def self.archive_directory
+    File.expand_path(File.join(ENV['HOME'], '.vagrant.d', 'pe_builds'))
+  end
 end
 
 require 'pe_build/action'

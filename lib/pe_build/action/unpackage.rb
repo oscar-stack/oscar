@@ -1,7 +1,6 @@
 require 'vagrant'
-require 'pebuild/action'
+require 'pe_build/action'
 require 'fileutils'
-require 'archive/tar/minitar'
 
 class PEBuild::Action::Unpackage
   def initialize(app, env)

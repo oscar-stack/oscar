@@ -1,6 +1,7 @@
-require 'pebuild'
-require 'pebuild/action'
+require 'pe_build'
+require 'pe_build/action'
 require 'vagrant'
+require 'fileutils'
 
 class PEBuild::Action::Download
   # Downloads a PE build to a temp directory

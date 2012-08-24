@@ -1,4 +1,4 @@
-require 'be_build'
+require 'pe_build'
 require 'vagrant'
 
 class PEBuild::Command < Vagrant::Command::Base
@@ -13,3 +13,6 @@ class PEBuild::Command < Vagrant::Command::Base
     end
   end
 end
+
+require 'pe_build/command/list'
+require 'pe_build/command/download'

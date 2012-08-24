@@ -1,6 +1,6 @@
 require 'vagrant'
 require 'uri'
-require 'pebuild'
+require 'pe_build'
 
 class PEBuild::Config < Vagrant::Config::Base
   attr_writer :download_root
