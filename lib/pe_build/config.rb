@@ -26,3 +26,5 @@ class PEBuild::Config < Vagrant::Config::Base
     errors.add("Invalid download root for Puppet Enterprise")
   end
 end
+
+Vagrant.config_keys.register(:pe_build) { PEBuild::Config }

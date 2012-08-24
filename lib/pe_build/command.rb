@@ -27,3 +27,5 @@ end
 
 require 'pe_build/command/list'
 require 'pe_build/command/download'
+
+Vagrant.commands.register(:pe_build) { PEBuild::Command }

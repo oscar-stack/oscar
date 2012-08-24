@@ -7,9 +7,6 @@ module PEBuild
 end
 
 require 'pe_build/action'
-
 require 'pe_build/config'
-Vagrant.config_keys.register(:pe_build) { PEBuild::Config }
-
 require 'pe_build/command'
-Vagrant.commands.register(:pe_build) { PEBuild::Command }
+require 'pe_build/provisioners'
