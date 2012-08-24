@@ -111,6 +111,8 @@ end
 
 def install_pe(config, node, attributes)
 
+  node.vm.provision :puppet_enterprise_bootstrap
+
   # Customize the answers file for each node
   node.vm.provision :shell do |shell|
     shell.inline = %{sed -e 's/%%CERTNAME%%/#{attributes["name"]}/' < /vagrant/answers/#{attributes["role"]}.txt > /tmp/answers.txt}
