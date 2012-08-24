@@ -44,11 +44,12 @@ class PEBuild::Action::Download
   end
 
   def perform_download
-    p @env[:box_name]
     if File.exist? @archive_path
       @env[:ui].info "#{@archive_path} already present, skipping download."
     else
-      Dir.chdir(PEBuild.archive_directory) { %x{curl -A "Vagrant/PEBuild (v#{PEBuild::Version})" -O #{url}} }
+      cmd = %{curl -A "Vagrant/PEBuild (v#{PEBuild::Version})" -O #{url}}
+      @env[:ui].info "Executing \"#{cmd}\""
+      Dir.chdir(PEBuild.archive_directory) { %x{#{cmd}} }
     end
   rescue => e
     File.unlink @archive_path if File.exist? @archive_path
