@@ -40,10 +40,11 @@ class PEBuild::Action::Download
   end
 
   def perform_download
+    p @env[:box_name]
     if File.exist? @archive_path
-      %x{curl -O #{@archive_path} #{url}}
-    else
       @env[:ui].info "#{@archive_path} already present, skipping download."
+    else
+      Dir.chdir(PEBuild.archive_directory) { %x{curl -O #{url}} }
     end
   rescue => e
     File.unlink @archive_path if File.exist? @archive_path
