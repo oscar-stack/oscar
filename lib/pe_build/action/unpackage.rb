@@ -28,7 +28,11 @@ class PEBuild::Action::Unpackage
     @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
+  # Sadly, shelling out is more sane than trying to use the facilities
+  # provided.
   def extract_build
-    Archive::Tar::Minitar.unpack(@env[:pe_build][:tempfile_path], PEBuild::STORE_PATH)
+    cmd = %{tar xf #{@archive_path} -C #{@env[:unpack_directory]}}
+    @env[:ui].info "Executing \"#{cmd}\""
+    %x{#{cmd}}
   end
 end
