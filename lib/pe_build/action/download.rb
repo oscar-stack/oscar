@@ -9,7 +9,9 @@ class PEBuild::Action::Download
   def initialize(app, env)
     @app, @env = app, env
 
-    @archive_path = File.join(PEBuild.archive_directory, @env[:global_config].pe_build.filename)
+    load_variables
+
+    @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
   def call(env)
@@ -20,13 +22,21 @@ class PEBuild::Action::Download
 
   private
 
+  def load_variables
+    if @env[:box_name]
+      @root     = @env[:vm].pe_build.download_root
+      @version  = @env[:vm].pe_build.version
+      @filename = @env[:vm].pe_build.version
+    end
+
+    @root     ||= @env[:global_config].pe_build.download_root
+    @version  ||= @env[:global_config].pe_build.version
+    @filename ||= @env[:global_config].pe_build.filename
+  end
+
   # @return [String] The full URL to download, based on the config
   def url
-    root     = @env[:global_config].pe_build.download_root
-    version  = @env[:global_config].pe_build.default_version
-    filename = @env[:global_config].pe_build.filename
-
-    [root, version, filename].join('/')
+    [@root, @version, @filename].join('/')
   end
 
   def perform_download
