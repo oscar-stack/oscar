@@ -6,53 +6,37 @@ require 'fileutils'
 class PEBuild::Action::Download
   # Downloads a PE build to a temp directory
 
-  BASENAME = 'pe_build'
-
   def initialize(app, env)
-    @app = app
-    @env = env
+    @app, @env = app, env
 
-    @tempfile_path  = File.join(@env[:tmp_path], "#{BASENAME}-#{Time.now.to_s}")
-    @tempfile       = File.new(@tempfile_path)
-
-    @default_downloaders = [Vagrant::Downloaders::HTTP, Vagrant::Downloaders::File]
-
-    @env[:pe_build] = {}
-    @env[:pe_build][:tempfile_path] = @tempfile_path
-
+    @archive_path = File.join(PEBuild.archive_directory, @env[:global_config].pe_build.filename)
   end
 
   def call(env)
     @env = env
-
-    instantiate_downloader
-    @downloader.download!(url, @tempfile)
-
+    perform_download
     @app.call(@env)
-  ensure
-    cleanup_tempfile
   end
+
+  private
 
   # @return [String] The full URL to download, based on the config
   def url
-    root     = @env.config.global.pe_build.download_root
-    version  = @env.config.global.pe_build.default_version
-    filename = @env.config.global.pe_build.filename
+    root     = @env[:global_config].pe_build.download_root
+    version  = @env[:global_config].pe_build.default_version
+    filename = @env[:global_config].pe_build.filename
 
     [root, version, filename].join('/')
   end
 
-  def instantiate_downloader
-    all_downloaders = (@env["download.classes"] | @default_downloaders)
-    downloader_class = all_downloaders.find { |downloader| downloader.match? self.url }
-
-    raise "No downloader for #{self.url}" unless downloader_class
-    @downloader = downloader_class.new(@nv[:ui])
-  end
-
-  alias_method :cleanup_tempfile, :recover
-  def cleanup_tempfile(env = @env)
-    @tempfile.close if(@tempfile and not @tempfile.closed?)
-    File.unlink @tempfile_path if @tempfile_path
+  def perform_download
+    if File.exist? @archive_path
+      %x{curl -O #{@archive_path} #{url}}
+    else
+      @env[:ui].info "#{@archive_path} already present, skipping download."
+    end
+  rescue => e
+    File.unlink @archive_path if File.exist? @archive_path
+    raise
   end
 end
