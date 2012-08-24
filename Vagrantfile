@@ -147,6 +147,7 @@ fi
 end
 
 Vagrant::Config.run do |config|
+  config.pe_build.download_root = 'http://faro.puppetlabs.lan/Puppet_Enterprise'
 
   # Generate a list of nodes with static IP addresses
   hosts_entries = nodes.select {|h| h["address"]}.map {|h| %{#{h["address"]} #{h["name"]}}}
