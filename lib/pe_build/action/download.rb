@@ -8,10 +8,7 @@ class PEBuild::Action::Download
 
   def initialize(app, env)
     @app, @env = app, env
-
     load_variables
-
-    @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
   def call(env)
@@ -22,6 +19,11 @@ class PEBuild::Action::Download
 
   private
 
+  # Determine system state and download a PE build accordingly.
+  #
+  # If we are applying actions within the context of a single box, then we
+  # should try to prefer and box level configuration options first. If
+  # anything is unset then we should fall back to the global settings.
   def load_variables
     if @env[:box_name]
       @root     = @env[:vm].pe_build.download_root
@@ -32,6 +34,8 @@ class PEBuild::Action::Download
     @root     ||= @env[:global_config].pe_build.download_root
     @version  ||= @env[:global_config].pe_build.version
     @filename ||= @env[:global_config].pe_build.filename
+
+    @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
   # @return [String] The full URL to download, based on the config

@@ -4,21 +4,28 @@ require 'fileutils'
 
 class PEBuild::Action::Unpackage
   def initialize(app, env)
-    @app = app
-    @env = env
+    @app, @env = app, env
+    load_variables
   end
 
   def call(env)
     @env = env
-
-    setup_pe_build_directory
     extract_build
-
     @app.call(@env)
   end
 
-  def setup_pe_build_directory
-    FileUtils.mkdir_p PEBuild::STORE_PATH
+  def load_variables
+    if @env[:box_name]
+      @root     = @env[:vm].pe_build.download_root
+      @version  = @env[:vm].pe_build.version
+      @filename = @env[:vm].pe_build.version
+    end
+
+    @root     ||= @env[:global_config].pe_build.download_root
+    @version  ||= @env[:global_config].pe_build.version
+    @filename ||= @env[:global_config].pe_build.filename
+
+    @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
   def extract_build
