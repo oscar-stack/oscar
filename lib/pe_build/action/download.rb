@@ -51,8 +51,10 @@ class PEBuild::Action::Download
       @env[:ui].info "Executing \"#{cmd}\""
       Dir.chdir(PEBuild.archive_directory) { %x{#{cmd}} }
     end
-  rescue => e
+  end
+
+  def recover(env)
+    @env = env
     File.unlink @archive_path if File.exist? @archive_path
-    raise
   end
 end
