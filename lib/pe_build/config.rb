@@ -16,7 +16,7 @@ class PEBuild::Config < Vagrant::Config::Base
   end
 
   def filename
-    @filename || "puppet-enterprise-#{@default_version}-all.tar.gz"
+    @filename || "puppet-enterprise-#{default_version}-all.tar.gz"
   end
 
   def validate(env, errors)
