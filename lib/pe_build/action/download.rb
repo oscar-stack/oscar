@@ -44,7 +44,7 @@ class PEBuild::Action::Download
     if File.exist? @archive_path
       @env[:ui].info "#{@archive_path} already present, skipping download."
     else
-      Dir.chdir(PEBuild.archive_directory) { %x{curl -O #{url}} }
+      Dir.chdir(PEBuild.archive_directory) { %x{curl -A "Vagrant/PEBuild (v#{PEBuild::Version})" -O #{url}} }
     end
   rescue => e
     File.unlink @archive_path if File.exist? @archive_path
