@@ -13,3 +13,8 @@ builder = Vagrant::Action::Builder.new do
 end
 
 Vagrant.actions.register :download_pe_build, builder
+
+Vagrant.actions.register(:prep_build, Vagrant::Action::Builder.new do
+  use PEBuild::Action::Download
+  use PEBuild::Action::Unpackage
+end)
