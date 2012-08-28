@@ -62,7 +62,6 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
-
   def prepare_cache_path
     FileUtils.mkdir @cache_path unless File.directory? @cache_path
   end
@@ -85,7 +84,14 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     answers     = "#{vm_base_dir}/answers/#{@env[:vm].name}.txt"
     log_file    = "/root/puppet-enterprise-installer-#{Time.now.strftime('%s')}.log"
 
-    cmd = "#{installer} -a #{answers} -l #{log_file}"
+    cmd = <<-EOD
+if [ -f /opt/puppet/bin/puppet ]; then
+  echo "Puppet Enterprise version $(/opt/puppet/bin/puppet --version) already present."
+  echo "Skipping installation."
+else
+  #{installer} -a #{answers} -l #{log_file}
+fi
+    EOD
 
     env[:vm].channel.sudo(cmd) do |type, data|
       # This section is directly ripped off from the shell provider.
