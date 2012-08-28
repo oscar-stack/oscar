@@ -113,37 +113,6 @@ def install_pe(config, node, attributes)
 
   node.vm.provision :puppet_enterprise_bootstrap
 
-  # Customize the answers file for each node
-  node.vm.provision :shell do |shell|
-    shell.inline = %{sed -e 's/%%CERTNAME%%/#{attributes["name"]}/' < /vagrant/answers/#{attributes["role"]}.txt > /tmp/answers.txt}
-  end
-
-  # If the PE version is 0.0.0, bypass puppet installation.
-  # This could easily make later provisioning fail.
-
-  if attributes['pe']['version'].match %r[^0\.0]
-    warn "Requested PE version was set to #{attributes['pe']['version']}; will not automatically install PE"
-    return
-  end
-
-  # Assemble the installer command
-  fragments = []
-  fragments << "2>&1"
-  fragments << attributes['pe']['installer']['executable']
-  fragments << '-a /tmp/answers.txt'
-  fragments << attributes['pe']['installer']['args'].join(' ')
-
-  installer_cmd = fragments.join(' ').gsub(':version', attributes['pe']['version'])
-
-  # Install Puppet Enterprise if it hasn't been installed yet. If the machine
-  # is rebooted then this provisioning step will be skipped.
-  node.vm.provision :shell do |shell|
-    shell.inline = <<-EOT
-if ! [ -f /opt/pe_version ]; then
-  #{installer_cmd}
-fi
-    EOT
-  end
 end
 
 Vagrant::Config.run do |config|
