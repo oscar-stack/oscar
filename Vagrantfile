@@ -3,6 +3,7 @@ $LOAD_PATH << "#{File.dirname(__FILE__)}/lib"
 require 'pe_build'
 require 'yaml'
 require 'soupkitchen'
+require 'vagrant-batch'
 
 config = SoupKitchen::Config.new(File.dirname(__FILE__))
 nodes  = config.all_node_configs
@@ -22,26 +23,26 @@ def provision_master(config, node, attributes)
   # Update puppet.conf to add the manifestdir directive to point to the
   # /manifests mount, if the directive isn't already present.
   node.vm.provision :shell do |shell|
-    shell.inline = <<-EOT
-sed -i '
-2 {
-/manifest/ !i\
-    manifestdir = /manifests
-}
-' /etc/puppetlabs/puppet/puppet.conf
-EOT
+    shell.inline = <<-EOT.gsub(/^ */, '')
+      sed -i '
+      2 {
+      /manifest/ !i\
+          manifestdir = /manifests
+      }
+      ' /etc/puppetlabs/puppet/puppet.conf
+    EOT
   end
 
   # Update puppet.conf to add the modulepath directive to point to the
   # /module mount, if it hasn't already been set.
   node.vm.provision :shell do |shell|
-    shell.inline = <<-EOT
-sed -i '
-/modulepath/ {
-/vagrant/ !s,$,:/modules,
-}
-' /etc/puppetlabs/puppet/puppet.conf
-EOT
+    shell.inline = <<-EOT.gsub(/^ */, '')
+      sed -i '
+      /modulepath/ {
+      /vagrant/ !s,$,:/modules,
+      }
+      ' /etc/puppetlabs/puppet/puppet.conf
+    EOT
   end
 
   # Rewrite the olde site.pp config since it's not used, and warn people
@@ -68,9 +69,10 @@ def configure_node(config, node, attributes)
   attributes["forwards"].each { |h| node.vm.forward_port h["source"], h["dest"] } if attributes["forwards"] # <-- I am a monster
 
   # Add in optional per-node configuration
-  node.vm.box_url = attributes["boxurl"] if attributes["boxurl"]
-  node.vm.network :hostonly, attributes["address"] if attributes["address"]
-  node.vm.boot_mode = attributes[:gui] if attributes[:gui]
+  node.vm.box_url = attributes['boxurl'] if attributes['boxurl']
+  node.vm.network :hostonly, attributes['address'] if attributes['address']
+  node.vm.boot_mode = attributes['bootmode'] if attributes['bootmode']
+  node.vm.guest = attributes['guest'].to_sym if attributes['guest']
 end
 
 # Provide provisioning details for this node
@@ -79,11 +81,24 @@ def provision_node(config, node, attributes)
   # Hack in faux DNS
   # Puppet enterprise requires something resembling functioning DNS to be
   # installed correctly
-  attributes["hosts_entries"].each do |entry|
-    node.vm.provision :shell do |shell|
-      shell.inline = %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
-    end
+  case attributes['guest']
+  when :windows, 'windows'
+    provisioner = :batch
+    script = attributes['hosts_entries'].map do |entry|
+      [
+        %{FindStr "#{entry}" %SYSTEMROOT%\\system32\\drivers\\etc\\hosts},
+        %{if %ERRORLEVEL% GEQ 1 echo #{entry} >> %SYSTEMROOT%\\system32\\drivers\\etc\\hosts}
+      ].join("\r\n")
+    end.join("\r\n")
+  else
+    provisioner = :shell
+    script = attributes['hosts_entries'].map do |entry|
+      %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
+    end.join("\n")
   end
+
+  node.vm.provision provisioner, :inline => script
+
 end
 
 Vagrant::Config.run do |config|
