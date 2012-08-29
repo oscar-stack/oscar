@@ -77,9 +77,7 @@ def configure_node(config, node, attributes)
   node.vm.box = attributes["boxname"]
 
   # Apply all specified port forwards
-  attributes["forwards"].each do |(src, dest)|
-    node.vm.forward_port src, dest
-  end if attributes["forwards"] # <-- I am a monster
+  attributes["forwards"].each { |h| node.vm.forward_port h["source"], h["dest"] } if attributes["forwards"] # <-- I am a monster
 
   # Add in optional per-node configuration
   node.vm.box_url = attributes["boxurl"] if attributes["boxurl"]

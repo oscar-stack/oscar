@@ -1,5 +1,6 @@
 require 'soupkitchen'
 require 'yaml'
+require 'kwalify'
 
 class SoupKitchen::Config
 
@@ -7,6 +8,11 @@ class SoupKitchen::Config
 
   def initialize(searchpath)
     @data = {}
+
+    schema_path = File.expand_path(File.join(File.dirname(__FILE__), 'schema.yaml'))
+    schema      = YAML.load_file schema_path
+    validator   = Kwalify::Validator.new(schema)
+    @parser     = Kwalify::Yaml::Parser.new(validator)
 
     files = ['config.yaml', 'config'].map { |m| "#{searchpath}/#{m}" }
 
@@ -30,14 +36,21 @@ class SoupKitchen::Config
   #
   # @raise [TypeError] If the YAML in a given file does not have a hash at top level
   def load_file(filename)
-    localdata = YAML.load(File.read(filename))
-    raise TypeError, "Expected a top level hash from #{filename}, got a #{localdata.class}" unless localdata.is_a? Hash
-    @data.merge!(localdata)
+    localdata = @parser.parse_file(filename)
+    errors    = @parser.errors
+
+    if (errors and not errors.empty?)
+      errors.each do |err|
+        puts "#{err.linenum}:#{err.column} [#{err.path}] #{err.message}"
+      end
+      raise TypeError
+    else
+      @data.merge!(localdata)
+    end
   end
 
   def nodes;    @data["nodes"]; end
   def profiles; @data["profiles"]; end
-  def pe;       @data["pe"]; end
 
   # Generate a full node configuration for a given node
   #
@@ -45,11 +58,6 @@ class SoupKitchen::Config
   #
   # <code>
   # {
-  #   "pe" => {
-  #     "version"   => "x.x.x",
-  #     "installer" => "/command/to/run/installer",
-  #   },
-  #
   #   "name" => "nodename",
   #   "role" => "roletype",
   #   "address" => "ip address",
@@ -67,8 +75,7 @@ class SoupKitchen::Config
   #
   # @return [Hash]
   def node_config(node_data)
-    # Set default PE configuration, and allow node overriding of these values
-    defaults = {"pe" => self.pe}
+    defaults = {} # XXX Code rot, figure out use or remove.
     node_data.merge!(defaults) do |key, oldval, newval|
       if oldval.is_a? Hash
         newval.merge oldval
@@ -78,7 +85,7 @@ class SoupKitchen::Config
       end
     end
     profile  = node_data["profile"]
-    node_data.merge! profiles[profile]
+    node_data.merge! profiles.find {|p| p["name"] == profile}
 
     node_data
   end
