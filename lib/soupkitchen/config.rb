@@ -41,7 +41,7 @@ class SoupKitchen::Config
 
     if (errors and not errors.empty?)
       errors.each do |err|
-        puts "#{err.linenum}:#{err.column} [#{err.path}] #{err.message}"
+        puts "#{filename} line #{err.linenum}, column #{err.column}, [kwalify path #{err.path}] #{err.message}"
       end
       raise TypeError
     else
@@ -78,7 +78,6 @@ class SoupKitchen::Config
   def node_config(node_data)
     profile  = node_data["profile"]
     node_data.merge! @data["profiles"].find {|p| p["name"] == profile}
-
     node_data
   end
 end
