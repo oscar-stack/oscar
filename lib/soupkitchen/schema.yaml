@@ -1,0 +1,62 @@
+---
+# Soupkitchen kwalify schema
+
+type: map
+mapping:
+
+  "nodes":
+    type: map
+    mapping:
+      "address":
+        required: false
+
+      "boxname": &boxname
+        type: str
+        required: true
+      "boxurl": &boxurl
+        type: str
+        required: true
+      "role":
+        description: "A node can have a role, that adds specific configuration for how it is going to be used."
+        type: enum
+        enum: ["master", "console", "agent"]
+        default: "agent"
+
+      "profile":
+        description: "A node can have a profile, which describes where the box came from."
+        type: enum
+        enum: ["master", "console", "agent"]
+        default: "agent"
+      "forwards": &forwards
+        type: mapping
+        mapping:
+          "source":
+            type: int
+            required: true
+          "dest":
+            type: int
+            required: true
+
+  "profiles":
+    description: "A profile describes a box type, so what name it is and where to retrieve it from."
+    type: map
+    mapping:
+      "boxname": *boxname
+      "boxurl": *boxurl
+
+
+  "roles":
+    description: "A role is the configuration needed for a node to do a specific role."
+    type: map
+    mapping:
+      "forwards": *forwards
+
+  # Network configuration for soupkitchen, not applicable to any node.
+  "networking":
+    type: map
+    mapping:
+      "start":
+        default: '10.16.1.4'
+      "end":
+        default: '10.16.1.31'
+
