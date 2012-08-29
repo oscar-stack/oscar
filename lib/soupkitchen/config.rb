@@ -49,8 +49,9 @@ class SoupKitchen::Config
     end
   end
 
-  def nodes;    @data["nodes"]; end
-  def profiles; @data["profiles"]; end
+  def nodes
+    @data["nodes"].map { |n| node_config(n) }
+  end
 
   # Generate a full node configuration for a given node
   #
@@ -75,17 +76,8 @@ class SoupKitchen::Config
   #
   # @return [Hash]
   def node_config(node_data)
-    defaults = {} # XXX Code rot, figure out use or remove.
-    node_data.merge!(defaults) do |key, oldval, newval|
-      if oldval.is_a? Hash
-        newval.merge oldval
-      else
-        warn "Tried to merge hash values with #{key} => [#{oldval}, #{newval}], but was not a hash. Using #{oldval}."
-        oldval
-      end
-    end
     profile  = node_data["profile"]
-    node_data.merge! profiles.find {|p| p["name"] == profile}
+    node_data.merge! @data["profiles"].find {|p| p["name"] == profile}
 
     node_data
   end

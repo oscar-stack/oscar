@@ -4,20 +4,8 @@ require 'pe_build'
 require 'yaml'
 require 'soupkitchen'
 
-begin
-  # Load config
-  config = SoupKitchen::Config.new(File.dirname(__FILE__))
-
-
-  nodes          = config.nodes
-  profiles       = config.profiles
-
-  nodes.map { |node| config.node_config(node) }
-rescue => e
-  puts "Malformed or missing config.yaml: #{e}"
-  puts e.backtrace
-  exit!(1)
-end
+config = SoupKitchen::Config.new(File.dirname(__FILE__))
+nodes  = config.nodes
 
 # This is an extension of the common node definition, as it makes provisions
 # for customizing the master for more seamless interaction with the base
