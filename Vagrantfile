@@ -98,21 +98,6 @@ def provision_node(config, node, attributes)
       shell.inline = %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
     end
   end
-
-  # Set the machine hostname
-  node.vm.provision :shell do |shell|
-    shell.inline = %{hostname #{attributes["name"]}}
-  end
-
-  node.vm.provision :shell do |shell|
-    shell.inline = %{domainname puppetlabs.test}
-  end
-end
-
-def install_pe(config, node, attributes)
-
-  node.vm.provision :puppet_enterprise_bootstrap
-
 end
 
 Vagrant::Config.run do |config|
@@ -129,7 +114,8 @@ Vagrant::Config.run do |config|
 
       configure_node(config, node, attributes)
       provision_node(config, node, attributes)
-      install_pe(config, node, attributes)
+
+      node.vm.provision :puppet_enterprise_bootstrap
 
       if attributes["role"].match /master/
         provision_master(config, node, attributes)

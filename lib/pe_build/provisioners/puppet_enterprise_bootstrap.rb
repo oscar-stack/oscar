@@ -34,14 +34,15 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
   end
 
   def prepare
-    prepare_cache_path
-    prepare_installer
+    FileUtils.mkdir @cache_path unless File.directory? @cache_path
+    @env[:action_runner].run(:prep_build, :unpack_directory => @cache_path)
   end
 
   def provision!
     # determine if bootstrapping is necessary
 
     prepare_answers_file
+    pre_provision
     perform_installation
   end
 
@@ -62,37 +63,44 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
-  def prepare_cache_path
-    FileUtils.mkdir @cache_path unless File.directory? @cache_path
-  end
-
-  def prepare_installer
-    @env[:action_runner].run(:prep_build, :unpack_directory => @cache_path)
-  end
-
   def prepare_answers_file
     FileUtils.mkdir_p @answers_dir unless File.directory? @answers_dir
+  end
+
+  # Add in compatibility shims to ensure a clean install.
+  def pre_provision
+    cmd = <<-EOT
+hostname #{@env[:vm].name}
+domainname soupkitchen.internal
+echo #{@env[:vm].name} > /etc/hostname
+
+    EOT
+
+    on_remote cmd
   end
 
   # Perform the actual installation
   #
   # @todo Don't restrict this to the universal installer
-  # @todo Don't always log the installation
   def perform_installation
     vm_base_dir = "/vagrant/.pe_build"
     installer   = "#{vm_base_dir}/puppet-enterprise-#{@version}-all/puppet-enterprise-installer"
     answers     = "#{vm_base_dir}/answers/#{@env[:vm].name}.txt"
     log_file    = "/root/puppet-enterprise-installer-#{Time.now.strftime('%s')}.log"
 
-    cmd = <<-EOD
+    cmd = <<-EOT
 if [ -f /opt/puppet/bin/puppet ]; then
-  echo "Puppet Enterprise version $(/opt/puppet/bin/puppet --version) already present."
+  echo "Puppet Enterprise already present, version $(/opt/puppet/bin/puppet --version)"
   echo "Skipping installation."
 else
   #{installer} -a #{answers} -l #{log_file}
 fi
-    EOD
+    EOT
 
+    on_remote cmd
+  end
+
+  def on_remote(cmd)
     env[:vm].channel.sudo(cmd) do |type, data|
       # This section is directly ripped off from the shell provider.
       if [:stderr, :stdout].include?(type)
