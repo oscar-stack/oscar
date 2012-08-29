@@ -5,48 +5,57 @@ type: map
 mapping:
 
   "nodes":
-    type: map
-    mapping:
-      "address":
-        required: false
-
-      "boxname": &boxname
-        type: str
-        required: true
-      "boxurl": &boxurl
-        type: str
-        required: true
-      "role":
-        description: "A node can have a role, that adds specific configuration for how it is going to be used."
-        type: enum
-        enum: ["master", "console", "agent"]
-        default: "agent"
-
-      "profile":
-        description: "A node can have a profile, which describes where the box came from."
-        type: enum
-        enum: ["master", "console", "agent"]
-        default: "agent"
-      "forwards": &forwards
-        type: mapping
+    type: seq
+    sequence:
+      -
+        type: map
         mapping:
-          "source":
-            type: int
+          "name":
             required: true
-          "dest":
-            type: int
-            required: true
+          "address":
+            required: false
+
+          "boxname": &boxname
+            type: str
+          "boxurl": &boxurl
+            type: str
+          "role":
+            desc: "A node can have a role, that adds specific configuration for how it is going to be used."
+            type: str
+            enum: ["master", "console", "agent"]
+            default: "agent"
+
+          "profile":
+            desc: "A node can have a profile, which describes where the box came from."
+            type: str
+          "forwards": &forwards
+            type: seq
+            sequence:
+              -
+                type: map
+                mapping:
+                  "source":
+                    type: int
+                    required: true
+                  "dest":
+                    type: int
+                    required: true
 
   "profiles":
-    description: "A profile describes a box type, so what name it is and where to retrieve it from."
-    type: map
-    mapping:
-      "boxname": *boxname
-      "boxurl": *boxurl
+    desc: "A profile describes a box type, so what name it is and where to retrieve it from."
+    type: seq
+    sequence:
+      -
+        type: map
+        mapping:
+          "name":
+            required: true
+          "boxname": *boxname
+          "boxurl": *boxurl
 
 
   "roles":
-    description: "A role is the configuration needed for a node to do a specific role."
+    desc: "A role is the configuration needed for a node to do a specific role."
     type: map
     mapping:
       "forwards": *forwards
