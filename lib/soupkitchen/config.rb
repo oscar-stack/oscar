@@ -81,15 +81,4 @@ class SoupKitchen::Config
 
     node_data
   end
-
-  # Delegate any unknown methods to our data, so we can pretend that we are
-  # the parsed YAML config.
-  def method_missing(meth, *args, &block)
-    if @data.respond_to? meth
-      args << block if block_given?
-      @data.send(meth, args)
-    else
-      super
-    end
-  end
 end
