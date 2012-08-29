@@ -5,19 +5,12 @@ class SoupKitchen::Config
 
   attr_reader :data
 
-  def initialize(*pathglob)
+  def initialize(searchpath)
     @data = {}
 
-    # The splat operator has some very radical changes between 1.8 and 1.9
-    case pathglob
-    when NilClass # IGNORE ME
-    when String
-      load_file pathglob
-    when Array
-      load_all pathglob.flatten
-    else
-      raise ArgumentError, "Expected one or more paths, got a #{pathglob.class}"
-    end
+    files = ['config.yaml', 'config'].map { |m| "#{searchpath}/#{m}" }
+
+    load_all files
   end
 
   # Recursively load any YAML files contained in the given paths.

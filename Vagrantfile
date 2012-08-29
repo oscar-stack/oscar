@@ -6,7 +6,7 @@ require 'soupkitchen'
 
 begin
   # Load config
-  config = SoupKitchen::Config.new('config.yaml', 'config')
+  config = SoupKitchen::Config.new(File.dirname(__FILE__))
 
 
   nodes          = config.nodes
