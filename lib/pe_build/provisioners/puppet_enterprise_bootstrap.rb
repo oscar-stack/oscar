@@ -69,12 +69,18 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
 
   # Add in compatibility shims to ensure a clean install.
   def pre_provision
-    cmd = <<-EOT
-hostname #{@env[:vm].name}
-domainname soupkitchen.internal
-echo #{@env[:vm].name} > /etc/hostname
-
-    EOT
+    case
+    when env[:vm].guest.is_a?(Vagrant::Guest::Windows)
+      cmd = <<-EOT
+        echo Y | netdom renamecomputer localhost /newname:#{@env[:vm].name}
+      EOT
+    else
+      cmd = <<-EOT
+        hostname #{@env[:vm].name}
+        domainname soupkitchen.internal
+        echo #{@env[:vm].name} > /etc/hostname
+      EOT
+    end
 
     on_remote cmd
   end
@@ -83,29 +89,48 @@ echo #{@env[:vm].name} > /etc/hostname
   #
   # @todo Don't restrict this to the universal installer
   def perform_installation
-    vm_base_dir = "/vagrant/.pe_build"
-    installer   = "#{vm_base_dir}/puppet-enterprise-#{@version}-all/puppet-enterprise-installer"
-    answers     = "#{vm_base_dir}/answers/#{@env[:vm].name}.txt"
-    log_file    = "/root/puppet-enterprise-installer-#{Time.now.strftime('%s')}.log"
-
-    cmd = <<-EOT
-if [ -f /opt/puppet/bin/puppet ]; then
-  echo "Puppet Enterprise already present, version $(/opt/puppet/bin/puppet --version)"
-  echo "Skipping installation."
-else
-  #{installer} -a #{answers} -l #{log_file}
-fi
-    EOT
+    case
+    when env[:vm].guest.is_a?(Vagrant::Guest::Windows)
+      vm_base_dir = 'C:\vagrant\.pe_build'
+      installer   = "#{vm_base_dir}\\puppet-enterprise-#{@version}.msi"
+      log_file    = "C:\\puppet-enterprise-installer-#{Time.now.strftime('%s')}.log"
+      cmd = <<-EOT
+        msiexec /qn /i #{installer} /l*v #{log_file} PUPPET_MASTER_SERVER=master PUPPET_AGENT_CERTNAME=#{@env[:vm].name}
+      EOT
+    else
+      vm_base_dir = "/vagrant/.pe_build"
+      installer   = "#{vm_base_dir}/puppet-enterprise-#{@version}-all/puppet-enterprise-installer"
+      answers     = "#{vm_base_dir}/answers/#{@env[:vm].name}.txt"
+      log_file    = "/root/puppet-enterprise-installer-#{Time.now.strftime('%s')}.log"
+      cmd = <<-EOT
+        if [ -f /opt/puppet/bin/puppet ]; then
+          echo "Puppet Enterprise already present, version $(/opt/puppet/bin/puppet --version)"
+          echo "Skipping installation."
+        else
+          #{installer} -a #{answers} -l #{log_file}
+        fi
+      EOT
+    end
 
     on_remote cmd
   end
 
   def on_remote(cmd)
-    env[:vm].channel.sudo(cmd) do |type, data|
-      # This section is directly ripped off from the shell provider.
-      if [:stderr, :stdout].include?(type)
-        color = type == :stdout ? :green : :red
-        env[:ui].info(data.chomp, :color => color, :prefix => false)
+    case
+    when env[:vm].guest.is_a?(Vagrant::Guest::Windows)
+      env[:vm].channel.execute(cmd) do |type, data|
+        if [:stderr, :stdout].include?(type)
+          color = type == :stdout ? :green : :red
+          env[:ui].info(data.chomp, :color => color, :prefix => false)
+        end
+      end
+    else
+      env[:vm].channel.sudo(cmd) do |type, data|
+        # This section is directly ripped off from the shell provider.
+        if [:stderr, :stdout].include?(type)
+          color = type == :stdout ? :green : :red
+          env[:ui].info(data.chomp, :color => color, :prefix => false)
+        end
       end
     end
   end
