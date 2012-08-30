@@ -51,16 +51,9 @@ class SoupKitchen::Config
 
   # Collects all node configuration as an array of the node structured data.
   #
-  # @raise [StandardError] If any of the node configurations doesn't have a name
-  #
   # @return [Array<Hash<String, String>>]
   def all_node_configs
     names = @data["nodes"].map { |h| h['name'] }
-
-    if names.any? { |n| n.nil? }
-      raise "Node configuration is missing a name"
-    end
-
     names.map { |n| node_config(n) }
   end
 
