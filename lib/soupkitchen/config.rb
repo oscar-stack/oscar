@@ -76,8 +76,7 @@ class SoupKitchen::Config
   #
   # @return [Hash]
   def node_config(node_data)
-    profile  = node_data["profile"]
-    node_data.merge! @data["profiles"].find {|p| p["name"] == profile}
-    node_data
+    profile = @data['profiles'].find {|p| p['name'] == node_data['profile'] }
+    profile.merge(node_data)
   end
 end
