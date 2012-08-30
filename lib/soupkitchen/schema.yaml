@@ -10,10 +10,8 @@ mapping:
       -
         type: map
         mapping:
-          "name":
-            required: true
-          "address":
-            required: false
+          "name": { required: true }
+          "address": { required: false }
 
           "boxname": &boxname
             type: str
@@ -56,9 +54,13 @@ mapping:
 
   "roles":
     desc: "A role is the configuration needed for a node to do a specific role."
-    type: map
-    mapping:
-      "forwards": *forwards
+    type: seq
+    sequence:
+      -
+        type: map
+        mapping:
+          name: { required: true }
+          "forwards": *forwards
 
   # Network configuration for soupkitchen, not applicable to any node.
   "networking":
