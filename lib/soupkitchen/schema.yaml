@@ -12,17 +12,23 @@ mapping:
         mapping:
           "name": { required: true }
           "address": { required: false }
-
+          "bootmode": &bootmode
+            required: false
+            type: str
+            desc: "Specifies the mode the VM is booted into."
+            enum: ['headless', 'gui']
           "boxname": &boxname
             type: str
           "boxurl": &boxurl
+            type: str
+          "guest": &guest
+            required: false
             type: str
           "role":
             desc: "A node can have a role, that adds specific configuration for how it is going to be used."
             type: str
             enum: ["master", "console", "agent"]
             default: "agent"
-
           "profile":
             desc: "A node can have a profile, which describes where the box came from."
             type: str
@@ -48,8 +54,10 @@ mapping:
         mapping:
           "name":
             required: true
+          "bootmode": *bootmode
           "boxname": *boxname
           "boxurl": *boxurl
+          "guest": *guest
 
 
   "roles":
