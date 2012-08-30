@@ -34,7 +34,7 @@ class SoupKitchen::Config
 
   # Load YAML from a file and merge it into the aggregated YAML
   #
-  # @raise [TypeError] If the YAML in a given file does not have a hash at top level
+  # @raise [TypeError] If the YAML in a given file does not match the configuration schema
   def load_file(filename)
     localdata = @parser.parse_file(filename)
     errors    = @parser.errors
@@ -49,35 +49,55 @@ class SoupKitchen::Config
     end
   end
 
-  def nodes
-    @data["nodes"].map { |n| node_config(n) }
+  # Collects all node configuration as an array of the node structured data.
+  #
+  # @raise [StandardError] If any of the node configurations doesn't have a name
+  #
+  # @return [Array<Hash<String, String>>]
+  def all_node_configs
+    names = @data["nodes"].map { |h| h['name'] }
+
+    if names.any? { |n| n.nil? }
+      raise "Node configuration is missing a name"
+    end
+
+    names.map { |n| node_config(n) }
   end
 
-  # Generate a full node configuration for a given node
+  # Provides the structured data representation of a node.
   #
-  # Provides a data structure that looks like the following:
+  # Configuration priority is 'profile' -> 'role' -> 'node'
   #
-  # <code>
-  # {
-  #   "name" => "nodename",
-  #   "role" => "roletype",
-  #   "address" => "ip address",
+  # @param [String] name The name of the node to fetch
   #
-  #   "forwards" => {
-  #     'local port' => 'remote port',
-  #   }
-  #
-  #   "profile" => {
-  #     "boxname" => "box shortname",
-  #     "boxurl"  => "box URL",
-  #   },
-  # }
-  # </code>
-  #
-  # @return [Hash]
-  def node_config(node_data)
-    profile  = node_data["profile"]
-    node_data.merge! @data["profiles"].find {|p| p["name"] == profile}
-    node_data
+  # @return [Hash<String, String>]
+  def node_config(node_name)
+    config = {}
+
+    unless (node_hash = @data['nodes'].find { |h| h['name'] == node_name })
+      raise "Node configuration for #{node_name} not found"
+    end
+
+    # Check to see if the node has a profile or role. If one of those values
+    # do exist, try to lookup that data and merge it into the config hash.
+    ['profile', 'role'].each do |type|
+      plural_type = "#{type}s"
+
+      type_name = node_hash[type] # Check to see if we have the requested type
+      if (type_name and type_hash = @data[plural_type].find { |t| t['name'] == type_name })
+        # The requested type exists in the node hash, and we were able to lookup
+        # the related configuration.
+        config.merge! type_hash
+      else
+        # The requested type exists in the node hash, but we were not able to
+        # lookup the related configuraion; die messily.
+        raise %{#{type.capitalize} configuration "#{type}" for #{node_name} not found}
+      end
+    end
+
+    # Merge the node hash last so that it takes precedence
+    config.merge! node_hash
+
+    config
   end
 end

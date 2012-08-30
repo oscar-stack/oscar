@@ -5,7 +5,7 @@ require 'yaml'
 require 'soupkitchen'
 
 config = SoupKitchen::Config.new(File.dirname(__FILE__))
-nodes  = config.nodes
+nodes  = config.all_node_configs
 
 # This is an extension of the common node definition, as it makes provisions
 # for customizing the master for more seamless interaction with the base
