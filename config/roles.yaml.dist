@@ -1,0 +1,16 @@
+---
+
+roles:
+  -
+    name: master
+    postinstall: "scripts/provision_master.sh"
+    forwards:
+      -
+        source: 443
+        dest: 20443
+
+  -
+    name: agent
+
+  -
+    name: console
