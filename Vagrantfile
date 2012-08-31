@@ -19,44 +19,9 @@ def provision_master(config, node, attributes)
   config.vm.share_folder 'manifests', '/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
   config.vm.share_folder 'modules', '/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
 
-  # Update puppet.conf to add the manifestdir directive to point to the
-  # /manifests mount, if the directive isn't already present.
-  node.vm.provision :shell do |shell|
-    shell.inline = <<-EOT
-sed -i '
-2 {
-/manifest/ !i\
-    manifestdir = /manifests
-}
-' /etc/puppetlabs/puppet/puppet.conf
-EOT
-  end
-
-  # Update puppet.conf to add the modulepath directive to point to the
-  # /module mount, if it hasn't already been set.
-  node.vm.provision :shell do |shell|
-    shell.inline = <<-EOT
-sed -i '
-/modulepath/ {
-/vagrant/ !s,$,:/modules,
-}
-' /etc/puppetlabs/puppet/puppet.conf
-EOT
-  end
-
-  # Rewrite the olde site.pp config since it's not used, and warn people
-  # about this.
-  node.vm.provision :shell do |shell|
-    shell.inline = %{echo "# /etc/puppetlabs/puppet/manifests is not used; see /manifests." > /etc/puppetlabs/puppet/manifests/site.pp}
-  end
-
   # Boost RAM for the master so that activemq doesn't asplode
   node.vm.customize([ "modifyvm", :id, "--memory", "1024" ])
 
-  # Enable autosigning on the master
-  node.vm.provision :shell do |shell|
-    shell.inline = %{echo '*' > /etc/puppetlabs/puppet/autosign.conf}
-  end
 end
 
 # Adds the vagrant configuration tweaks
@@ -86,6 +51,15 @@ def provision_node(config, node, attributes)
   end
 end
 
+# Configure optional postinstall script
+def postinstall_node(config, node, attributes)
+  if attributes["postinstall"]
+    node.vm.provision :shell do |shell|
+      shell.path = attributes["postinstall"]
+    end
+  end
+end
+
 Vagrant::Config.run do |config|
   config.pe_build.download_root = 'http://faro.puppetlabs.lan/Puppet_Enterprise'
 
@@ -102,10 +76,9 @@ Vagrant::Config.run do |config|
       provision_node(config, node, attributes)
 
       node.vm.provision :puppet_enterprise_bootstrap
+      provision_master(config, node, attributes) if attributes["role"].match /master/
+      postinstall_node(config, node, attributes)
 
-      if attributes["role"].match /master/
-        provision_master(config, node, attributes)
-      end
     end
   end
 end

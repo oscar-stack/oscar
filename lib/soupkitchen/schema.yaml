@@ -38,6 +38,10 @@ mapping:
                   "dest":
                     type: int
                     required: true
+          "postinstall": &postinstall
+            desc: "The path to an optional script to run as the final provisioning action."
+            type: str
+            required: false
 
   "profiles":
     desc: "A profile describes a box type, so what name it is and where to retrieve it from."
@@ -50,6 +54,7 @@ mapping:
             required: true
           "boxname": *boxname
           "boxurl": *boxurl
+          "postinstall": *postinstall
 
 
   "roles":
@@ -59,8 +64,9 @@ mapping:
       -
         type: map
         mapping:
-          name: { required: true }
+          "name": { required: true }
           "forwards": *forwards
+          "postinstall": *postinstall
 
   # Network configuration for soupkitchen, not applicable to any node.
   "networking":
