@@ -11,12 +11,12 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
       @role || :agent
     end
 
-    def validate
-      errors.add("role must be one of [:master, :agent]") unless [:master, :agent].include role
+    def validate(env, errors)
+      errors.add("role must be one of [:master, :agent]") unless [:master, :agent].include? role
     end
   end
 
-  def self.config
+  def self.config_class
     Config
   end
 
