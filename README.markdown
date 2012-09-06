@@ -1,7 +1,17 @@
 Instapants
-========
+==========
 
 Create a full Puppet Enterprise environment from vagrant base boxes.
+
+Versions
+--------
+
+Right now, the master branch of soupkitchen is going through a major rewrite.
+The codebase is in flux and thus the documentation is really going to be based
+on inline comments.
+
+All of the supported behavior before the write has been tagged as version 0.0.1
+and is the reference point for the following documentation.
 
 Prerequisites
 -------------
@@ -13,6 +23,7 @@ Installation
 ------------
 
     git clone git://github.com/adrienthebo/soupkitchen
+    git checkout 0.0.1
     cd soupkitchen
 
     # You'll need a config.yaml to specify how to build the environment. Contact your
