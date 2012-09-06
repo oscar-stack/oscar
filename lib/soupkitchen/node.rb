@@ -62,8 +62,9 @@ class SoupKitchen::Node
     @gui      = @attrs["gui"]
   end
 
-  def define!
-    Vagrant::Config.run do |config|
+  def define(config)
+
+    blk = lambda do |config|
       config.vm.define @name do |node|
 
         entry = "#{@address} master"
@@ -78,5 +79,7 @@ class SoupKitchen::Node
         end
       end
     end
+
+    blk.call(config)
   end
 end
