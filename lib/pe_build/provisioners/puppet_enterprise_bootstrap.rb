@@ -1,11 +1,16 @@
 require 'pe_build/provisioners'
 require 'vagrant'
 require 'fileutils'
+require 'erb'
 
 class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::Base
 
   class Config < Vagrant::Config::Base
     attr_writer :role
+
+    def role=(rolename)
+      @role = (rolename.is_a?(Symbol)) ? rolename : rolename.intern
+    end
 
     def role
       @role || :agent
@@ -29,7 +34,7 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     @answers_dir  = File.join(@cache_path, 'answers')
   end
 
-  def validate
+  def validate(app, env)
 
   end
 
