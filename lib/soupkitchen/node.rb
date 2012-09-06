@@ -15,19 +15,19 @@ class SoupKitchen::Node
   end
 
   addrole(:base) do |node|
-    node.vm.box = @attrs["boxname"]
+    node.vm.box = @boxname
 
-    node.vm.network :hostonly, @attrs["address"]  if @attrs["address"]
-    if @attrs["forwards"]
-      @attrs["forwards"].each { |h| node.vm.forward_port h["source"], h["dest"] }
+    if @forwards
+      @forwards.each { |h| node.vm.forward_port h["source"], h["dest"] }
     end
 
+    node.vm.network :hostonly, @address
     # Add in optional per-node configuration
-    node.vm.box_url          = @attrs["boxurl"]   if @attrs["boxurl"]
-    node.vm.boot_mode        = @attrs["gui"]      if @attrs["gui"]
+    node.vm.box_url          = @boxurl if @boxurl
+    node.vm.boot_mode        = @gui    if @gui
 
     node.vm.provision :puppet_enterprise_bootstrap do |pe|
-      pe.role = @attrs["role"] if @attrs["role"]
+      pe.role = @role if @role
     end
   end
 
@@ -43,22 +43,37 @@ class SoupKitchen::Node
     node.vm.customize([ "modifyvm", :id, "--memory", "1024" ])
   end
 
+  attr_accessor :address
+  attr_writer :networking # Callback attribute for retrieving hosts
+
+  attr_reader :name, :boxname, :boxurl, :role
+  attr_reader :forwards # really?
+
   def initialize(yaml_attrs)
     @attrs = yaml_attrs
+
+    @name    = @attrs["name"]
+    @address = @attrs["address"]
+    @role    = @attrs["role"].intern if @attrs["role"]
+
+    @boxurl   = @attrs["boxurl"]
+    @boxname  = @attrs["boxname"]
+    @forwards = @attrs["forwards"]
+    @gui      = @attrs["gui"]
   end
 
   def define!
     Vagrant::Config.run do |config|
-      config.vm.define @attrs["name"] do |node|
+      config.vm.define @name do |node|
 
-        entry = "#{@attrs["address"]} master"
+        entry = "#{@address} master"
 
         node.vm.provision :shell do |shell|
           shell.inline = %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
         end
         instance_exec(node, &(self.class.getrole(:base)))
 
-        if(sym = @attrs["role"] and blk = self.class.getrole(sym.intern))
+        if (blk = self.class.getrole(@role))
           instance_exec(node, &blk)
         end
       end

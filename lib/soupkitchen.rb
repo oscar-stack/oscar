@@ -12,4 +12,5 @@ end
 
 require 'soupkitchen/config'
 require 'soupkitchen/environment'
+require 'soupkitchen/networking'
 require 'soupkitchen/node'
