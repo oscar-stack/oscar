@@ -3,39 +3,9 @@ $LOAD_PATH << "#{File.dirname(__FILE__)}/lib"
 require 'pe_build'
 require 'soupkitchen'
 
-config = SoupKitchen::Config.new
-config.load! File.dirname(__FILE__)
-nodes  = config.all_node_configs
+SoupKitchen.facehug! File.dirname(__FILE__)
 
-# This is an extension of the common node definition, as it makes provisions
-# for customizing the master for more seamless interaction with the base
-# system
-def provision_master(config, node, attributes)
-
-  # Manifests and modules need to be mounted on the master via shared folders,
-  # but the default /vagrant mount has permissions and ownership that conflicts
-  # with the master and pe-puppet. We mount these folders separately with
-  # loosened permissions.
-  config.vm.share_folder 'manifests', '/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
-  config.vm.share_folder 'modules', '/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
-
-  # Boost RAM for the master so that activemq doesn't asplode
-  node.vm.customize([ "modifyvm", :id, "--memory", "1024" ])
-end
-
-# Adds the vagrant configuration tweaks
-def configure_node(config, node, attributes)
-
-  node.vm.box = attributes["boxname"]
-
-  # Apply all specified port forwards
-  attributes["forwards"].each { |h| node.vm.forward_port h["source"], h["dest"] } if attributes["forwards"] # <-- I am a monster
-
-  # Add in optional per-node configuration
-  node.vm.box_url = attributes["boxurl"] if attributes["boxurl"]
-  node.vm.network :hostonly, attributes["address"] if attributes["address"]
-  node.vm.boot_mode = attributes[:gui] if attributes[:gui]
-end
+__END__
 
 # Provide provisioning details for this node
 def provision_node(config, node, attributes)
@@ -50,6 +20,7 @@ def provision_node(config, node, attributes)
   end
 end
 
+
 Vagrant::Config.run do |config|
   config.pe_build.download_root = 'http://faro.puppetlabs.lan/Puppet_Enterprise'
 
@@ -62,12 +33,7 @@ Vagrant::Config.run do |config|
 
       attributes["hosts_entries"] = hosts_entries
 
-      configure_node(config, node, attributes)
       provision_node(config, node, attributes)
-
-      node.vm.provision :puppet_enterprise_bootstrap do |pe|
-        pe.role = attributes["role"] if attributes["role"]
-      end
 
       if attributes["role"].match /master/
         provision_master(config, node, attributes)
