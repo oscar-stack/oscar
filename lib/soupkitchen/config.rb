@@ -6,16 +6,17 @@ class SoupKitchen::Config
 
   attr_reader :data
 
-  def initialize(searchpath)
+  def initialize
     @data = {}
 
     schema_path = File.expand_path(File.join(File.dirname(__FILE__), 'schema.yaml'))
     schema      = YAML.load_file schema_path
     validator   = Kwalify::Validator.new(schema)
     @parser     = Kwalify::Yaml::Parser.new(validator)
+  end
 
+  def load!(searchpath)
     files = ['config.yaml', 'config'].map { |m| "#{searchpath}/#{m}" }
-
     load_all files
   end
 

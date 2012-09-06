@@ -1,10 +1,10 @@
 # lol shim
 $LOAD_PATH << "#{File.dirname(__FILE__)}/lib"
 require 'pe_build'
-require 'yaml'
 require 'soupkitchen'
 
-config = SoupKitchen::Config.new(File.dirname(__FILE__))
+config = SoupKitchen::Config.new
+config.load! File.dirname(__FILE__)
 nodes  = config.all_node_configs
 
 # This is an extension of the common node definition, as it makes provisions
