@@ -2,6 +2,8 @@
 
 roles:
   -
+    # Puppet Enterprise Masters need port 443 forwarded so that the console is
+    # reachable from the hypervisor
     name: master
     forwards:
       -
