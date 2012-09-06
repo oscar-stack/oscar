@@ -37,7 +37,7 @@ class SoupKitchen::Node
     # with the master and pe-puppet. We mount these folders separately with
     # loosened permissions.
     node.vm.share_folder 'manifests', '/manifests', './manifests', :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
-    node.vm.share_folder 'modules', '/modules', './modules',  :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
+    node.vm.share_folder 'modules',   '/modules',   './modules',   :extra => 'fmode=644,dmode=755,fmask=022,dmask=022'
 
     # Boost RAM for the master so that activemq doesn't asplode
     node.vm.customize([ "modifyvm", :id, "--memory", "1024" ])
