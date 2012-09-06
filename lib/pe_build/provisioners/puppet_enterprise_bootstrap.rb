@@ -47,8 +47,13 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     # determine if bootstrapping is necessary
 
     prepare_answers_file
-    pre_provision
-    perform_installation
+    configure_installer
+
+    [:pre, :provision, :post].each do |stepname|
+      [:base, config.role].each do |rolename|
+        step rolename, stepname
+      end
+    end
   end
 
   private
@@ -72,37 +77,32 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     FileUtils.mkdir_p @answers_dir unless File.directory? @answers_dir
   end
 
-  # Add in compatibility shims to ensure a clean install.
-  def pre_provision
-    cmd = <<-EOT
-hostname #{@env[:vm].name}
-domainname soupkitchen.internal
-echo #{@env[:vm].name} > /etc/hostname
+  def step(role, stepname)
+    script_dir  = File.join(@env[:root_path], 'bootstrap', role.to_s, stepname.to_s)
+    script_list = Dir.glob("#{script_dir}/*")
 
-    EOT
+    if script_list.empty?
+      @env[:ui].info "No steps for #{role}/#{stepname}", :color => :cyan
+    end
 
-    on_remote cmd
+    script_list.each do |template_path|
+      template = File.read(template_path)
+      contents = ERB.new(template).result(binding)
+
+      on_remote contents
+    end
   end
 
-  # Perform the actual installation
+  # Determine the proper invocation of the PE installer
   #
   # @todo Don't restrict this to the universal installer
-  def perform_installation
+  def configure_installer
     vm_base_dir = "/vagrant/.pe_build"
     installer   = "#{vm_base_dir}/puppet-enterprise-#{@version}-all/puppet-enterprise-installer"
     answers     = "#{vm_base_dir}/answers/#{@env[:vm].name}.txt"
     log_file    = "/root/puppet-enterprise-installer-#{Time.now.strftime('%s')}.log"
 
-    cmd = <<-EOT
-if [ -f /opt/puppet/bin/puppet ]; then
-  echo "Puppet Enterprise already present, version $(/opt/puppet/bin/puppet --version)"
-  echo "Skipping installation."
-else
-  #{installer} -a #{answers} -l #{log_file}
-fi
-    EOT
-
-    on_remote cmd
+    @installer_cmd = "#{installer} -a #{answers} -l #{log_file}"
   end
 
   def on_remote(cmd)
