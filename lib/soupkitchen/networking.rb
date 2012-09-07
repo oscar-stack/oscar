@@ -5,16 +5,16 @@ class SoupKitchen::Networking
 
   def initialize(yaml_config)
 
-    range = yaml_config["pool"]
-
+    range       = yaml_config["pool"]
+    @domainname = yaml_config["domainname"]
     @network = IPAddress.parse(range)
 
-    @pool = []
+    @pool  = []
+    @nodes = {}
 
     @network.each_host { |h| @pool << h }
     @iterator = @pool.each
 
-    @nodes = {}
   end
 
   def register(node)
@@ -30,7 +30,7 @@ class SoupKitchen::Networking
     arr = []
 
     arr << ['127.0.0.1', ['localhost']]
-    arr << ['127.0.1.1', [node.name]]
+    arr << ['127.0.1.1', [node.name, "#{node.name}.#{@domainname}"]]
 
     arr << ['::1', %w{ip6-localhost ip6-loopback}]
 
@@ -39,7 +39,7 @@ class SoupKitchen::Networking
     arr << ['ff02::1', ['ip6-allnodes']]
     arr << ['ff02::2', ['ip6-allrouters']]
 
-    @nodes.each_pair { |address, n| arr << [address, [n.name]] }
+    @nodes.each_pair { |address, n| arr << [address, [n.name, "#{n.name}.#{@domainname}"]] }
 
 
     arr
