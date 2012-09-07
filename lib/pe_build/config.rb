@@ -20,10 +20,10 @@ class PEBuild::Config < Vagrant::Config::Base
   end
 
   def validate(env, errors)
-    URI.parse(@download_root)
+    URI.parse(download_root)
   rescue
     # TODO I18n
-    errors.add("Invalid download root for Puppet Enterprise")
+    errors.add("Invalid download root '#{download_root.inspect}'")
   end
 end
 
