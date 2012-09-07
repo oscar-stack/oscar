@@ -50,12 +50,16 @@ class PEBuild::Action::Unpackage
 
   # Determine the name of the top level directory by peeking into the tarball
   def destination_directory
+    raise "No such file \"#{@archive_path}\"" unless File.file? @archive_path
+
     out = IO.popen %{tar -tf #{@archive_path}}
     firstline = out.gets
-    if (match = firstline.match %r[^(.*?)/])
+    if firstline.nil? or firstline.empty?
+      raise "Unable to determine destination directory name for \"#{@archive_path}\""
+    elsif (match = firstline.match %r[^(.*?)/])
       match[1]
     end
   ensure
-    out.close
+    out.close if out
   end
 end
