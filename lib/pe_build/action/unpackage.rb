@@ -35,7 +35,7 @@ class PEBuild::Action::Unpackage
   # provided.
   def extract_build
     if File.directory? @extracted_dir
-      @env[:ui].info "#{@extracted_dir} already present, skipping extraction."
+      @env[:ui].info "#{destination_directory} already present, skipping extraction."
     else
       cmd = %{tar xf #{@archive_path} -C #{@env[:unpack_directory]}}
       @env[:ui].info "Executing \"#{cmd}\""

@@ -45,7 +45,7 @@ class PEBuild::Action::Download
 
   def perform_download
     if File.exist? @archive_path
-      @env[:ui].info "#{@archive_path} already present, skipping download."
+      @env[:ui].info "#{@filename} cached, skipping download."
     else
       FileUtils.mkdir_p PEBuild.archive_directory unless File.directory? PEBuild.archive_directory
       cmd = %{curl -A "Vagrant/PEBuild (v#{PEBuild::Version})" -O #{url}}
