@@ -6,11 +6,11 @@ class PEBuild::Action::Unpackage
   def initialize(app, env)
     @app, @env = app, env
     load_variables
-    @extracted_dir = File.join(@env[:unpack_directory], destination_directory)
   end
 
   def call(env)
     @env = env
+    @extracted_dir = File.join(@env[:unpack_directory], destination_directory)
     extract_build
     @app.call(@env)
   end
