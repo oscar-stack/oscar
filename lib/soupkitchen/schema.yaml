@@ -69,5 +69,5 @@ mapping:
       "pool":
         required: true
       "domainname":
-        default: 'soupkitchen.internal'
+        required: true
 
