@@ -66,8 +66,8 @@ mapping:
   "networking":
     type: map
     mapping:
-      "start":
-        default: '10.16.1.4'
-      "end":
-        default: '10.16.1.31'
+      "pool":
+        required: true
+      "domainname":
+        default: 'soupkitchen.internal'
 
