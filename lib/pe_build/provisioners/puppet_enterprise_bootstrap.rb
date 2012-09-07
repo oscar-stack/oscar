@@ -6,7 +6,7 @@ require 'erb'
 class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::Base
 
   class Config < Vagrant::Config::Base
-    attr_writer :role
+    attr_writer :role, :verbose
 
     def role=(rolename)
       @role = (rolename.is_a?(Symbol)) ? rolename : rolename.intern
@@ -14,6 +14,10 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
 
     def role
       @role || :agent
+    end
+
+    def verbose
+      @verbose || true
     end
 
     def validate(env, errors)
@@ -108,9 +112,10 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
   def on_remote(cmd)
     env[:vm].channel.sudo(cmd) do |type, data|
       # This section is directly ripped off from the shell provider.
-      if [:stderr, :stdout].include?(type)
-        color = type == :stdout ? :green : :red
-        env[:ui].info(data.chomp, :color => color, :prefix => false)
+      if type == :stdout and config.verbose
+        @env[:ui].info(data.chomp, :color => :green, :prefix => false)
+      elsif type == :stderr
+        @env[:ui].info(data.chomp, :color => :red, :prefix => false)
       end
     end
   end
