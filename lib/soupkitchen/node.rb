@@ -1,6 +1,8 @@
 require 'soupkitchen'
 require 'vagrant'
 
+require 'vagrant-hosts'
+
 class SoupKitchen::Node
 
   class << self
@@ -25,6 +27,15 @@ class SoupKitchen::Node
     # Add in optional per-node configuration
     node.vm.box_url          = @boxurl if @boxurl
     node.vm.boot_mode        = @gui    if @gui
+
+    host_entries = @networking.hosts_for(self)
+    #node.vm.provision :shell do |shell|
+    #  shell.inline = %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
+    #end
+
+    node.vm.provision :hosts do |h|
+      host_entries.each { |(address, aliases)| h.add_host address, aliases }
+    end
 
     node.vm.provision :puppet_enterprise_bootstrap do |pe|
       pe.role = @role if @role
@@ -67,11 +78,6 @@ class SoupKitchen::Node
     blk = lambda do |config|
       config.vm.define @name do |node|
 
-        entry = "#{@address} master"
-
-        node.vm.provision :shell do |shell|
-          shell.inline = %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
-        end
         instance_exec(node, &(self.class.getrole(:base)))
 
         if (blk = self.class.getrole(@role))

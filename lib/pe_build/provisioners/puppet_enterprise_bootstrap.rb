@@ -25,8 +25,8 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     Config
   end
 
-  def initialize(env, config)
-    @env, @config = env, config
+  def initialize(*args)
+    super
 
     load_variables
 
