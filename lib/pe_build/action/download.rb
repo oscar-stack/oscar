@@ -48,7 +48,7 @@ class PEBuild::Action::Download
       @env[:ui].info "#{@filename} cached, skipping download."
     else
       FileUtils.mkdir_p PEBuild.archive_directory unless File.directory? PEBuild.archive_directory
-      cmd = %{curl -A "Vagrant/PEBuild (v#{PEBuild::Version})" -O #{url}}
+      cmd = %{curl -L -A "Vagrant/PEBuild (v#{PEBuild::Version})" -O #{url}}
       @env[:ui].info "Executing '#{cmd}'"
       Dir.chdir(PEBuild.archive_directory) { %x{#{cmd}} }
     end
