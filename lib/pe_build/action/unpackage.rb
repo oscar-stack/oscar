@@ -45,6 +45,7 @@ class PEBuild::Action::Unpackage
     # If anything goes wrong while extracting, nuke the extracted directory
     # as it could be incomplete. If we do this, then we can ensure that if
     # the extracted directory already exists then it will be in a good state.
+    @env[:ui].info "Removing possibly damaged installer directory '#{@extracted_dir}'"
     FileUtils.rm_r @extracted_dir
   end
 
@@ -52,14 +53,14 @@ class PEBuild::Action::Unpackage
   def destination_directory
     raise "No such file \"#{@archive_path}\"" unless File.file? @archive_path
 
-    out = IO.popen %{tar -tf #{@archive_path}}
-    firstline = out.gets
+    IO.popen(%{tar -tf #{@archive_path}}) { |out| firstline = out.gets }
+
+    raise "Unable to read installer archive #{@archive_path}" if $? != 0
+
     if firstline.nil? or firstline.empty?
-      raise "Unable to determine destination directory name for \"#{@archive_path}\""
+      raise "Could not extract directory name from installer tarfile #{File.basename @archive_path}"
     elsif (match = firstline.match %r[^(.*?)/])
       match[1]
     end
-  ensure
-    out.close if out
   end
 end
