@@ -6,7 +6,7 @@ require 'erb'
 class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::Base
 
   class Config < Vagrant::Config::Base
-    attr_writer :role, :verbose
+    attr_writer :verbose
 
     def role=(rolename)
       @role = (rolename.is_a?(Symbol)) ? rolename : rolename.intern
