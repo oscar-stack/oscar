@@ -1,3 +1,5 @@
+require 'oscar/version'
 module PEBuild
-  Version = '0.1.2rc2'
+  # Copy the version constant from oscar
+  VERSION = Oscar::VERSION
 end
