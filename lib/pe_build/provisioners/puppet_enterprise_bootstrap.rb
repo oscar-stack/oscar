@@ -84,14 +84,15 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
   # @todo use absolute path for locating answers file template
   def prepare_answers_file
     FileUtils.mkdir_p @answers_dir unless File.directory? @answers_dir
-    @env[:ui].info "Creating answers file for #{@env[:vm].name} with role #{config.role}"
+    @env[:ui].info "Creating answers file, node:#{@env[:vm].name}, role: #{config.role}"
 
-    template = "#{@env[:root_path]}/templates/answers/#{config.role}.txt.erb"
+    template = File.read("#{@env[:root_path]}/templates/answers/#{config.role}.txt.erb")
     dest     = "#{@answers_dir}/#{@env[:vm].name}.txt"
 
     contents = ERB.new(template).result(binding)
 
-    File.open(dest) do |file|
+    @env[:ui].info "Writing answers file to #{dest}"
+    File.open(dest, "w") do |file|
       file.write contents
     end
   end
