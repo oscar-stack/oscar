@@ -1,8 +1,8 @@
-require 'soupkitchen'
+require 'oscar'
 require 'yaml'
 require 'kwalify'
 
-class SoupKitchen::Config
+class Oscar::Config
 
   attr_reader :data
 

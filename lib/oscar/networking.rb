@@ -1,7 +1,7 @@
-require 'soupkitchen'
+require 'oscar'
 require 'ipaddress'
 
-class SoupKitchen::Networking
+class Oscar::Networking
 
   def initialize(yaml_config)
 

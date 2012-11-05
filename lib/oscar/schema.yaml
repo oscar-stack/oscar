@@ -1,5 +1,5 @@
 ---
-# Soupkitchen kwalify schema
+# Oscar kwalify schema
 
 type: map
 mapping:
@@ -62,7 +62,7 @@ mapping:
           name: { required: true }
           "forwards": *forwards
 
-  # Network configuration for soupkitchen, not applicable to any node.
+  # Network configuration for oscar, not applicable to any node.
   "networking":
     type: map
     mapping:

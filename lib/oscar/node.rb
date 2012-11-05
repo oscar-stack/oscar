@@ -1,9 +1,9 @@
-require 'soupkitchen'
+require 'oscar'
 require 'vagrant'
 
 require 'vagrant-hosts'
 
-class SoupKitchen::Node
+class Oscar::Node
 
   class << self
     def addrole(name, &block)
