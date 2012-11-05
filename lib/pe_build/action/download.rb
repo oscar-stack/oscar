@@ -53,9 +53,4 @@ class PEBuild::Action::Download
       Dir.chdir(PEBuild.archive_directory) { %x{#{cmd}} }
     end
   end
-
-  def recover(env)
-    @env = env
-    File.unlink @archive_path if File.exist? @archive_path
-  end
 end
