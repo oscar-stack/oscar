@@ -51,16 +51,20 @@ class PEBuild::Action::Unpackage
 
   # Determine the name of the top level directory by peeking into the tarball
   def destination_directory
-    raise "No such file \"#{@archive_path}\"" unless File.file? @archive_path
+    raise Errno::ENOENT, "No such file \"#{@archive_path}\"" unless File.file? @archive_path
 
+    firstline = nil
+    dir       = nil
+    dir_regex = %r[^(.*?)/]
     IO.popen(%{tar -tf #{@archive_path}}) { |out| firstline = out.gets }
 
-    raise "Unable to read installer archive #{@archive_path}" if $? != 0
-
     if firstline.nil? or firstline.empty?
-      raise "Could not extract directory name from installer tarfile #{File.basename @archive_path}"
-    elsif (match = firstline.match %r[^(.*?)/])
-      match[1]
+      raise "Could not get a directory listing from the installer tarfile #{File.basename @archive_path}"
+    elsif (match = firstline.match dir_regex)
+      dir = match[1]
+    else
+      raise "Could not determine the base directory name from #{firstline} - doesn't match #{dir_regex.to_s}"
     end
+    dir
   end
 end
