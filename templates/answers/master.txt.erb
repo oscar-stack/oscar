@@ -33,9 +33,9 @@ q_puppet_enterpriseconsole_smtp_user_auth=n
 q_puppet_enterpriseconsole_smtp_username=
 
 q_puppet_symlinks_install=y
-q_puppetagent_certname=master
+q_puppetagent_certname=<%= @env[:ui].name %>
 q_puppetagent_install=y
-q_puppetagent_server=master
+q_puppetagent_server=<%= @env[:ui].name %>
 q_puppetca_install=y
 q_puppetmaster_certname=master
 q_puppetmaster_dnsaltnames=master,puppet

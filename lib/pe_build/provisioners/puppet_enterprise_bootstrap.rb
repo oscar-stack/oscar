@@ -6,7 +6,7 @@ require 'erb'
 class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::Base
 
   class Config < Vagrant::Config::Base
-    attr_writer :verbose
+    attr_writer :verbose, :master
 
     def role=(rolename)
       @role = (rolename.is_a?(Symbol)) ? rolename : rolename.intern
@@ -18,6 +18,10 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
 
     def verbose
       @verbose || true
+    end
+
+    def master
+      @master || 'master'
     end
 
     def validate(env, errors)
@@ -77,8 +81,19 @@ class PEBuild::Provisioners::PuppetEnterpriseBootstrap < Vagrant::Provisioners::
     @archive_path = File.join(PEBuild.archive_directory, @filename)
   end
 
+  # @todo use absolute path for locating answers file template
   def prepare_answers_file
     FileUtils.mkdir_p @answers_dir unless File.directory? @answers_dir
+    @env[:ui].info "Creating answers file for #{@env[:vm].name} with role #{config.role}"
+
+    template = "#{@env[:root_path]}/templates/answers/#{config.role}.txt.erb"
+    dest     = "#{@answers_dir}/#{@env[:vm].name}.txt"
+
+    contents = ERB.new(template).result(binding)
+
+    File.open(dest) do |file|
+      file.write contents
+    end
   end
 
   def step(role, stepname)
