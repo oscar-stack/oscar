@@ -10,6 +10,7 @@ module Oscar
   end
 end
 
+require 'oscar/version'
 require 'oscar/config'
 require 'oscar/environment'
 require 'oscar/networking'
