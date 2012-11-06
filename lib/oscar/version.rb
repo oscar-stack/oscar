@@ -1,3 +1,3 @@
 module Oscar
-  VERSION = '0.2.0alpha1'
+  VERSION = '0.2.0alpha2'
 end
