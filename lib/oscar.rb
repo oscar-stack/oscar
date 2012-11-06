@@ -1,7 +1,7 @@
 
 module Oscar
 
-  def self.facehug!(directory)
+  def self.load!(directory)
     env = Oscar::Environment.new
     env.config.load! directory
     env.run!
