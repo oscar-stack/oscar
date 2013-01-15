@@ -18,6 +18,8 @@ class Oscar::Config
   def load!(searchpath)
     files = ['config.yaml', 'config'].map { |m| "#{searchpath}/#{m}" }
     load_all files
+
+    raise "No configuration loaded" if @data.nil? or @data.empty?
   end
 
   # Recursively load any YAML files contained in the given paths.
