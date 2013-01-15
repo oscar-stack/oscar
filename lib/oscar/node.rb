@@ -29,9 +29,6 @@ class Oscar::Node
     node.vm.boot_mode        = @gui    if @gui
 
     host_entries = @networking.hosts_for(self)
-    #node.vm.provision :shell do |shell|
-    #  shell.inline = %{grep "#{entry}" /etc/hosts || echo "#{entry}" >> /etc/hosts}
-    #end
 
     node.vm.provision :hosts do |h|
       host_entries.each { |(address, aliases)| h.add_host address, aliases }
