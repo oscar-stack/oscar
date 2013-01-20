@@ -30,10 +30,9 @@ class Oscar::Node
 
     host_entries = @networking.hosts_for(self)
 
-    node.vm.provision :hosts do |h|
-      host_entries.each { |(address, aliases)| h.add_host address, aliases }
-
-      h.add_ipv6_multicast
+    node.vm.provision :hosts do |provisioner|
+      host_entries.each { |(address, aliases)| provisioner.add_host address, aliases }
+      provisioner.add_ipv6_multicast
     end
 
     node.vm.provision :puppet_enterprise_bootstrap do |pe|
