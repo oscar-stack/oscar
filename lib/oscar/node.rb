@@ -32,6 +32,8 @@ class Oscar::Node
 
     node.vm.provision :hosts do |h|
       host_entries.each { |(address, aliases)| h.add_host address, aliases }
+
+      h.add_ipv6_multicast
     end
 
     node.vm.provision :puppet_enterprise_bootstrap do |pe|

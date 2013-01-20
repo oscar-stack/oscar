@@ -30,17 +30,9 @@ class Oscar::Networking
     arr = []
 
     arr << ['127.0.0.1', ['localhost']]
-    arr << ['127.0.1.1', [node.name, "#{node.name}.#{@domainname}"]]
-
-    arr << ['::1', %w{ip6-localhost ip6-loopback}]
-
-    arr << ['fe00::0', ['ip6-localnet']]
-    arr << ['ff00::0', ['ip6-mcastprefix']]
-    arr << ['ff02::1', ['ip6-allnodes']]
-    arr << ['ff02::2', ['ip6-allrouters']]
+    arr << ['127.0.1.1', ["#{node.name}.#{@domainname}", node.name]]
 
     @nodes.each_pair { |address, n| arr << [address, [n.name, "#{n.name}.#{@domainname}"]] }
-
 
     arr
   end
