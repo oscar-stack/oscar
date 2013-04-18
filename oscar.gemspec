@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.homepage = 'https://github.com/adrienthebo/oscar'
 
   gem.add_dependency 'vagrant',          '~> 1.0.0'
-  gem.add_dependency 'vagrant-hosts',    '>= 0.0.1'
+  gem.add_dependency 'vagrant-hosts',    '~> 0.0.1'
   gem.add_dependency 'vagrant-pe_build', '>= 0.0.1'
   gem.add_dependency 'kwalify',          '~> 0.7.0'
   gem.add_dependency 'ipaddress',        '~> 0.8.0'
