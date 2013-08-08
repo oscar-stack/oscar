@@ -1,0 +1,12 @@
+---
+# Boxes from http://puppet-vagrant-boxes.puppetlabs.com/
+# Updated: 2013-08-08
+boxes:
+  'fedora-18-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/fedora-18-x64-vbox4210-nocm.box'
+  'centos-64-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box'
+  'centos-59-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/centos-59-x64-vbox4210-nocm.box'
+  'debian-607-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/debian-607-x64-vbox4210-nocm.box'
+  'debian-70rc1-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/debian-70rc1-x64-vbox4210-nocm.box'
+  'sles-11sp1-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/sles-11sp1-x64-vbox4210-nocm.box'
+  'ubuntu-server-10044-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-10044-x64-vbox4210-nocm.box'
+  'ubuntu-server-12042-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210-nocm.box'
