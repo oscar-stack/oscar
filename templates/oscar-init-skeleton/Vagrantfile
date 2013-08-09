@@ -1,0 +1,4 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+#Oscar.run File.expand_path('../config', __FILE__)
