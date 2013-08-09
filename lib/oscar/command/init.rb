@@ -17,8 +17,11 @@ class Oscar::Command::Init < Vagrant.plugin('2', :command)
     working_dir   = Dir.getwd
     template_root = File.join(Oscar.template_root, 'oscar-init-skeleton')
 
-    FileUtils.cp   File.join(template_root, 'Vagrantfile'), working_dir
-    FileUtils.cp_r File.join(template_root, @opts[:provider]), File.join(working_dir, 'config')
+    vagrantfile = File.join(template_root, 'Vagrantfile')
+    config_dir  = File.join(template_root, @opts[:provider], '.')
+
+    FileUtils.cp   vagrantfile, working_dir
+    FileUtils.cp_r config_dir,  File.join(working_dir, 'config')
 
     @env.ui.info I18n.t('oscar.command.init.default')
   end
