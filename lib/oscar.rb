@@ -10,3 +10,5 @@ module Oscar
     @template_root ||= File.expand_path('../templates', source_root)
   end
 end
+
+I18n.load_path << File.join(Oscar.template_root, 'locales/en.yml')

@@ -1,0 +1,9 @@
+---
+en:
+  oscar:
+    command:
+      init:
+        default: |-
+          A stub Vagrantfile has been placed in this directory and default configurations
+          have been placed into the `config` directory. You can now run `vagrant up` to start
+          your Oscar built environment, courtesy of Vagrant.
