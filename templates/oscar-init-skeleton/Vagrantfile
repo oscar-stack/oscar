@@ -1,4 +1,4 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-#Oscar.run File.expand_path('../config', __FILE__)
+Vagrant.configure('2', &Oscar.run(File.expand_path('../config', __FILE__)))
