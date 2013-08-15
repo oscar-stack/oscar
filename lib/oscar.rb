@@ -9,6 +9,9 @@ module Oscar
   def self.template_root
     @template_root ||= File.expand_path('../templates', source_root)
   end
+
+  require 'oscar/runner'
+  extend Oscar::Runner
 end
 
 I18n.load_path << File.join(Oscar.template_root, 'locales/en.yml')
