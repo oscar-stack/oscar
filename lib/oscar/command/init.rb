@@ -1,4 +1,5 @@
-require 'fileutils'
+require 'oscar/skeleton'
+
 class Oscar::Command::Init < Vagrant.plugin('2', :command)
 
   include Oscar::Command::Helpers
@@ -8,20 +9,16 @@ class Oscar::Command::Init < Vagrant.plugin('2', :command)
     @env      = env
     @cmd_name = 'oscar init'
 
-    @opts = {:provider => 'virtualbox'}
+    @provider = nil
 
     split_argv
   end
 
   def execute
-    working_dir   = Dir.getwd
-    template_root = File.join(Oscar.template_root, 'oscar-init-skeleton')
+    argv = parse_options(parser)
 
-    vagrantfile = File.join(template_root, 'Vagrantfile')
-    config_dir  = File.join(template_root, @opts[:provider], '.')
-
-    FileUtils.cp   vagrantfile, working_dir
-    FileUtils.cp_r config_dir,  File.join(working_dir, 'config')
+    skeleton = Oscar::Skeleton.new(@env, @provider)
+    skeleton.generate
 
     @env.ui.info I18n.t('oscar.command.init.default')
   end
@@ -30,11 +27,11 @@ class Oscar::Command::Init < Vagrant.plugin('2', :command)
 
   def parser
     OptionParser.new do |o|
-      o.banner    = "Usage: vagrant #{@cmd_name} [<args>]"
-      o.separator = ''
+      o.banner = "Usage: vagrant #{@cmd_name} [<args>]"
+      o.separator ''
 
       o.on('-p', '--provider=val', String, 'The Vagrant provider type to template') do |val|
-        @opts[:provider] = val
+        @provider = val
       end
     end
   end
