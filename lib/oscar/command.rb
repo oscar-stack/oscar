@@ -6,6 +6,7 @@ module Oscar
     include Oscar::Command::Helpers
 
     require 'oscar/command/init'
+    require 'oscar/command/init_vms'
 
     def initialize(argv, env)
       @argv     = argv
@@ -26,8 +27,11 @@ module Oscar
       @subcommands = Vagrant::Registry.new
 
       @subcommands.register('init') do
-        require_relative 'command/init'
         Oscar::Command::Init
+      end
+
+      @subcommands.register('init-vms') do
+        Oscar::Command::InitVMs
       end
     end
   end
