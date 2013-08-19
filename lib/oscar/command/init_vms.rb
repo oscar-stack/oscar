@@ -70,7 +70,7 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
       {
         'name'  => name,
         'box'   => box,
-        'roles' => ['pe_puppetmaster']
+        'roles' => ['pe-puppet-master']
       }
     end
 
@@ -78,7 +78,7 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
       {
         'name'  => name,
         'box'   => box,
-        'roles' => ['pe_puppetagent']
+        'roles' => ['pe-puppet-agent']
       }
     end
 
