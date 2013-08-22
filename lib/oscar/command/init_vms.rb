@@ -36,6 +36,15 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
       yaml = YAML.dump pe_build
       fh.write(yaml)
     end
+
+    @env.ui.info(
+      I18n.t(
+        'oscar.command.init_vms.settings',
+        :masters => @masters.map { |m| "  - #{m}" }.join("\n"),
+        :agents  => @agents.map { |m| "  - #{m}" }.join("\n"),
+        :pe_version => @pe_version,
+      )
+    )
   end
 
   private
@@ -63,8 +72,6 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
 
   def vms
     vm_list = []
-
-
 
     vm_list += @masters.map do |(name, box)|
       {

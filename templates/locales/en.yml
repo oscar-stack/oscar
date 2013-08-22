@@ -7,3 +7,11 @@ en:
           A stub Vagrantfile has been placed in this directory and default configurations
           have been placed into the `config` directory. You can now run `vagrant up` to start
           your Oscar built environment, courtesy of Vagrant.
+      init_vms:
+        settings: |-
+          Your environment has been initialized with the following configuration:
+          masters:
+          %{masters}
+          agents:
+          %{agents}
+          pe_version: %{pe_version}
