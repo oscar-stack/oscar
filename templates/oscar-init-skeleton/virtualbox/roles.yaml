@@ -2,7 +2,7 @@
 roles:
   pe-puppet-master:
     private_networks:
-      - {auto_network: true}
+      - {ip: '0.0.0.0', auto_network: true}
     provider:
       type: virtualbox
       customize:
@@ -13,7 +13,7 @@ roles:
 
   pe-puppet-agent:
     private_networks:
-      - {auto_network: true}
+      - {ip: '0.0.0.0', auto_network: true}
     provisioners:
       - {type: hosts}
       - {type: pe_bootstrap}
