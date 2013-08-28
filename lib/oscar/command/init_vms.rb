@@ -13,7 +13,7 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
     @masters = []
     @agents  = []
 
-    require 'vagrant-pe_build'
+    require 'pe_build/release'
     @pe_version = PEBuild::Release::LATEST_VERSION
 
     split_argv
