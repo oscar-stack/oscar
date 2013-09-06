@@ -22,22 +22,7 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
   def execute
     argv = parse_options(parser)
 
-    config_dir = Pathname.new(File.join(Dir.getwd, 'config'))
-
-    vm_config_file = config_dir + 'vms.yaml'
-    pe_config_file = config_dir + 'pe_build.yaml'
-
-    config_dir.mkpath unless config_dir.exist?
-
-    vm_config_file.open('w') do |fh|
-      yaml = YAML.dump vms
-      fh.write(yaml)
-    end
-
-    pe_config_file.open('w') do |fh|
-      yaml = YAML.dump pe_build
-      fh.write(yaml)
-    end
+    write_configs
 
     @env.ui.info(
       I18n.t(
@@ -74,6 +59,25 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
         puts o
         exit 0
       end
+    end
+  end
+
+  def write_configs
+    config_dir = Pathname.new(File.join(Dir.getwd, 'config'))
+
+    vm_config_file = config_dir + 'vms.yaml'
+    pe_config_file = config_dir + 'pe_build.yaml'
+
+    config_dir.mkpath unless config_dir.exist?
+
+    vm_config_file.open('w') do |fh|
+      yaml = YAML.dump vms
+      fh.write(yaml)
+    end
+
+    pe_config_file.open('w') do |fh|
+      yaml = YAML.dump pe_build
+      fh.write(yaml)
     end
   end
 
