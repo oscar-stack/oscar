@@ -69,6 +69,11 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
       o.on('-p', '--pe-version=val', String, 'The PE version to install on the VMs') do |val|
         @pe_version = val
       end
+
+      o.on('-h', '--help', 'Display this help message') do
+        puts o
+        exit 0
+      end
     end
   end
 
