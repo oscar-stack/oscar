@@ -33,6 +33,11 @@ class Oscar::Command::Init < Vagrant.plugin('2', :command)
       o.on('-p', '--provider=val', String, 'The Vagrant provider type to template') do |val|
         @provider = val
       end
+
+      o.on('-h', '--help', 'Display this help message') do
+        puts o
+        exit 0
+      end
     end
   end
 end
