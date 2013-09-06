@@ -22,22 +22,7 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
   def execute
     argv = parse_options(parser)
 
-    config_dir = Pathname.new(File.join(Dir.getwd, 'config'))
-
-    vm_config_file = config_dir + 'vms.yaml'
-    pe_config_file = config_dir + 'pe_build.yaml'
-
-    config_dir.mkpath unless config_dir.exist?
-
-    vm_config_file.open('w') do |fh|
-      yaml = YAML.dump vms
-      fh.write(yaml)
-    end
-
-    pe_config_file.open('w') do |fh|
-      yaml = YAML.dump pe_build
-      fh.write(yaml)
-    end
+    write_configs
 
     @env.ui.info(
       I18n.t(
@@ -69,22 +54,46 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
       o.on('-p', '--pe-version=val', String, 'The PE version to install on the VMs') do |val|
         @pe_version = val
       end
+
+      o.on('-h', '--help', 'Display this help message') do
+        puts o
+        exit 0
+      end
+    end
+  end
+
+  def write_configs
+    config_dir = Pathname.new(File.join(Dir.getwd, 'config'))
+
+    vm_config_file = config_dir + 'vms.yaml'
+    pe_config_file = config_dir + 'pe_build.yaml'
+
+    config_dir.mkpath unless config_dir.exist?
+
+    vm_config_file.open('w') do |fh|
+      yaml = YAML.dump vms
+      fh.write(yaml)
+    end
+
+    pe_config_file.open('w') do |fh|
+      yaml = YAML.dump pe_build
+      fh.write(yaml)
     end
   end
 
   def vms
     vm_list = []
 
-    vm_list += @masters.map do |(name, box)|
-      {
+    @masters.each do |(name, box)|
+      vm_list << {
         'name'  => name,
         'box'   => box,
         'roles' => ['pe-puppet-master']
       }
     end
 
-    vm_list += @agents.map do |(name, box)|
-      {
+    @agents.each do |(name, box)|
+      vm_list << {
         'name'  => name,
         'box'   => box,
         'roles' => ['pe-puppet-agent']
