@@ -80,16 +80,16 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
   def vms
     vm_list = []
 
-    vm_list += @masters.map do |(name, box)|
-      {
+    @masters.each do |(name, box)|
+      vm_list << {
         'name'  => name,
         'box'   => box,
         'roles' => ['pe-puppet-master']
       }
     end
 
-    vm_list += @agents.map do |(name, box)|
-      {
+    @agents.each do |(name, box)|
+      vm_list << {
         'name'  => name,
         'box'   => box,
         'roles' => ['pe-puppet-agent']
