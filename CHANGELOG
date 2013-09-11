@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+0.3.1
+-----
+
+2013-09-11
+
+This is a backwards compatible bugfix release.
+
+  * Improvements to command line interface, messages, and help options
+  * Updated README to be vaguely helpful
+  * Update 'roles' template to behave with auto_network and vagrant 1.2.7+
+
 0.3.0
 -----
 
