@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+0.3.2
+-----
+
+2014-05-02
+
+  * (GH-24) Remove call to deprecated `Vagrant.require_plugin`
+  * Update gem dependencies to restrict to minor plugin versions
+
 0.3.1
 -----
 
