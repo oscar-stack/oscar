@@ -19,8 +19,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'vagrant-hosts',          '~> 2.1'
   gem.add_dependency 'vagrant-pe_build',       '~> 0.8'
-  gem.add_dependency 'vagrant-auto_network',   '~> 0.2'
-  gem.add_dependency 'vagrant-config_builder', '~> 0.8'
+  gem.add_dependency 'vagrant-auto_network',   '~> 1.0'
+  gem.add_dependency 'vagrant-config_builder', '~> 0.9'
 
   gem.files        = %x{git ls-files -z}.split("\0")
   gem.require_path = 'lib'
