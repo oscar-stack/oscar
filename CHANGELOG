@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+0.4.0
+-----
+
+2014-05-21
+
+This is the first Oscar release to depend on the AutoNetwork 1.x series. Some
+changes in behavior may result from the major version jump in this component.
+In addition to new features, AutoNetwork 1.0.0 also restores compatibility with
+Vagrant 1.6.
+
+  * (GH-27) Support Vagrant 1.6
+
+
 0.3.2
 -----
 
