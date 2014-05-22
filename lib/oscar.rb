@@ -1,4 +1,9 @@
 module Oscar
+  require 'vagrant-hosts'
+  require 'vagrant-pe_build'
+  require 'vagrant-auto_network'
+  require 'vagrant-config_builder'
+
   require 'oscar/version'
   require 'oscar/plugin'
 
