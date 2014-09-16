@@ -1,0 +1,19 @@
+---
+roles:
+  pe-puppet-master:
+    private_networks:
+      - {ip: '0.0.0.0', auto_network: true}
+    provider:
+      type: vmware_fusion
+      customize:
+        - [modifyvm, !ruby/sym id, '--memory', 1024]
+    provisioners:
+      - {type: hosts}
+      - {type: pe_bootstrap, role: !ruby/sym master}
+
+  pe-puppet-agent:
+    private_networks:
+      - {ip: '0.0.0.0', auto_network: true}
+    provisioners:
+      - {type: hosts}
+      - {type: pe_bootstrap}
