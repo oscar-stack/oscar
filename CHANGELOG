@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+0.4.2
+-----
+
+(Codename: bowl of petunias)
+
+2015-03-09
+
+This is a backwards compatible bugfix release.
+
+  * (GH-40) Add vagrant_fusion vmware templates
+
+Thanks to Ethan Brown for contributing GH-29.
+
 0.4.1
 -----
 
