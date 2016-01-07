@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+0.4.3
+-----
+
+2016-01-07
+
+This is a backwards-compatible dependency update release. The updated
+dependency versions are all bugfix and feature releases, no major version
+changes. The dependencies are being updated in order to ensure that critical
+bug fixes in e.g. the pe_build plugin are included when validating oscar's
+dependencies.
+
+  * Update vagrant-hosts dependency to 2.6.1
+  * Update vagrant-pe_build dependency to 0.13.6
+  * Update vagrant-auto_network dependency to 1.0.2
+  * Update vagrant-config_builder dependency to 0.15.1
+
 0.4.2
 -----
 
