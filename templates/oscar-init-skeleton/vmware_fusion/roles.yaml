@@ -7,12 +7,12 @@ roles:
       - type: vmware_fusion
         vmx: { memsize: 2048 }
     provisioners:
-      - {type: hosts}
+      - {type: hosts, sync_hosts: true}
       - {type: pe_bootstrap, role: !ruby/sym master}
 
   pe-puppet-agent:
     private_networks:
       - {ip: '0.0.0.0', auto_network: true}
     provisioners:
-      - {type: hosts}
+      - {type: hosts, sync_hosts: true}
       - {type: pe_bootstrap}

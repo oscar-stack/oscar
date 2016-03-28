@@ -9,7 +9,7 @@ roles:
         customize:
           - [modifyvm, !ruby/sym id, '--memory', 2048]
     provisioners:
-      - {type: hosts}
+      - {type: hosts, sync_hosts: true}
       - {type: pe_bootstrap, role: !ruby/sym master}
 
   pe-puppet-agent:
@@ -19,5 +19,5 @@ roles:
       - type: virtualbox
         linked_clone: true
     provisioners:
-      - {type: hosts}
+      - {type: hosts, sync_hosts: true}
       - {type: pe_bootstrap}
