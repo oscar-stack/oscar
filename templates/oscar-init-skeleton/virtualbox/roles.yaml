@@ -6,7 +6,7 @@ roles:
     providers:
       - type: virtualbox
         customize:
-          - [modifyvm, !ruby/sym id, '--memory', 1024]
+          - [modifyvm, !ruby/sym id, '--memory', 2048]
     provisioners:
       - {type: hosts}
       - {type: pe_bootstrap, role: !ruby/sym master}
