@@ -43,11 +43,13 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
 
       o.on('-m', '--master=val', String, 'The name and basebox for a Puppet master') do |val|
         name, box = val.split('=')
+        box ||= 'puppetlabs/centos-7.2-64-nocm'
         @masters << [name, box]
       end
 
       o.on('-a', '--agent=val', String, 'The name and basebox for a Puppet agent') do |val|
         name, box = val.split('=')
+        box ||= 'puppetlabs/centos-7.2-64-nocm'
         @agents << [name, box]
       end
 

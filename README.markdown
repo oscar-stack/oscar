@@ -17,16 +17,10 @@ Initialize the base Oscar environment:
 Define a set of VMs:
 
     └> vagrant oscar init-vms \
-      --master master=centos-64-x64-vbox4210-nocm \
-      --agent first=centos-59-x64-vbox4210-nocm   \
-      --agent second=ubuntu-server-10044-x64-vbox4210-nocm
+      --master master=puppetlabs/centos-7.2-64-nocm \
+      --agent first=puppetlabs/centos-6.6-64-nocm  \
+      --agent second=puppetlabs/ubuntu-14.04-64-nocm
     Your environment has been initialized with the following configuration:
-    masters:
-      - ["master", "centos-64-x64-vbox4210-nocm"]
-    agents:
-      - ["first", "centos-59-x64-vbox4210-nocm"]
-      - ["second", "ubuntu-server-10044-x64-vbox4210-nocm"]
-    pe_version: 3.0.1
 
 And build everything:
 
@@ -58,17 +52,6 @@ Configuring
 Oscar handles guest machine configuration with YAML.
 
 The default configuration looks something like this:
-
-### `config/boxes.yaml`
-
-    ---
-    # Boxes from http://puppet-vagrant-boxes.puppetlabs.com/
-    # Updated: 2013-08-08
-    boxes:
-      'fedora-18-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/fedora-18-x64-vbox4210-nocm.box'
-      'centos-64-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box'
-      'centos-59-x64-vbox4210-nocm': 'http://puppet-vagrant-boxes.puppetlabs.com/centos-59-x64-vbox4210-nocm.box'
-    [...]
 
 ### `config/roles.yaml`
 

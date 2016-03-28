@@ -5,6 +5,7 @@ roles:
       - {ip: '0.0.0.0', auto_network: true}
     providers:
       - type: virtualbox
+        linked_clone: true
         customize:
           - [modifyvm, !ruby/sym id, '--memory', 2048]
     provisioners:
@@ -14,6 +15,9 @@ roles:
   pe-puppet-agent:
     private_networks:
       - {ip: '0.0.0.0', auto_network: true}
+    providers:
+      - type: virtualbox
+        linked_clone: true
     provisioners:
       - {type: hosts}
       - {type: pe_bootstrap}
