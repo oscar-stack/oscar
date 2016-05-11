@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 
+0.5.1
+-----
+
+2016-05-11
+
+This is an update release.
+
+  * Update vagrant-pe_build dependency to 0.15.x
+
+
 0.5.0
 -----
 
