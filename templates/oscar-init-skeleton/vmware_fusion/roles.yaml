@@ -15,4 +15,4 @@ roles:
       - {ip: '0.0.0.0', auto_network: true}
     provisioners:
       - {type: hosts, sync_hosts: true}
-      - {type: pe_bootstrap}
+      - {type: pe_agent, master: pe-puppet-master}

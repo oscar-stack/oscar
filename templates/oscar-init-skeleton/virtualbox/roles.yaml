@@ -20,4 +20,4 @@ roles:
         linked_clone: true
     provisioners:
       - {type: hosts, sync_hosts: true}
-      - {type: pe_bootstrap}
+      - {type: pe_agent, master: pe-puppet-master}
