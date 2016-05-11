@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.homepage = 'https://github.com/oscar-stack/oscar'
 
   gem.add_dependency 'vagrant-hosts',          '~> 2.7'
-  gem.add_dependency 'vagrant-pe_build',       '~> 0.14.0'
+  gem.add_dependency 'vagrant-pe_build',       '~> 0.15.0'
   gem.add_dependency 'vagrant-auto_network',   '~> 1.0'
   gem.add_dependency 'vagrant-config_builder', '~> 1.0'
 
