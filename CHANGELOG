@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+0.5.3
+-----
+
+2016-12-14
+
+This is an update release.
+
+  * Update vagrant-hosts dependency to ~> 2.8
+  * Update vagrant-pe_build dependency to >= 0.17.0
+  * Update vagrant-config_builder dependency to ~> 1.2
+
+
 0.5.2
 -----
 
