@@ -1,4 +1,6 @@
 $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
+
+require 'date'
 require 'oscar/version'
 
 Gem::Specification.new do |gem|
