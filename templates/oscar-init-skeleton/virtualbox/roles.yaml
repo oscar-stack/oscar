@@ -7,7 +7,7 @@ roles:
       - type: virtualbox
         linked_clone: true
         customize:
-          - [modifyvm, !ruby/sym id, '--memory', 2048]
+          - [modifyvm, !ruby/sym id, '--memory', 4048]
     provisioners:
       - {type: hosts, sync_hosts: true}
       - {type: pe_bootstrap, role: !ruby/sym master}
@@ -20,4 +20,4 @@ roles:
         linked_clone: true
     provisioners:
       - {type: hosts, sync_hosts: true}
-      - {type: pe_agent, master: pe-puppet-master}
+      - {type: pe_agent, master: master}

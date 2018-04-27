@@ -18,7 +18,7 @@ Define a set of VMs:
 
     └> vagrant oscar init-vms \
       --master master=puppetlabs/centos-7.2-64-nocm \
-      --agent first=puppetlabs/centos-6.6-64-nocm  \
+      --agent first=puppetlabs/centos-7.2-64-nocm  \
       --agent second=puppetlabs/ubuntu-14.04-64-nocm
     Your environment has been initialized with the following configuration:
 
