@@ -2,5 +2,4 @@
 config.yaml
 .pe_build
 *.gem
-templates/oscar-init-skeleton/.DS_Store
-.DS_Store
+**/.DS_Store
