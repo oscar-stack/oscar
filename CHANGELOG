@@ -1,6 +1,21 @@
 CHANGELOG
 =========
 
+0.5.5
+-----
+
+2018-10-11
+
+This is an update release to support PE 2019.0
+
+  * Update vagrant-pe_build dependency to 0.18.0 or newer for PE 2019.0
+
+  * Updates and fixes to templates used by `vagrant oscar init`
+
+Many thanks to [Thirumoorthi R](https://github.com/thirumoorthir)
+for contributing improvements to the `oscar init` templates!
+
+
 0.5.4
 -----
 
