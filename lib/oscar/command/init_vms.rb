@@ -107,5 +107,6 @@ class Oscar::Command::InitVMs < Vagrant.plugin('2', :command)
 
   def pe_build
     {'pe_build' => {'version' => @pe_version}}
+    {'pe_build' => {'download_root' => "https://s3.amazonaws.com/pe-builds/released/:version"}}
   end
 end

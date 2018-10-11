@@ -1,3 +1,5 @@
 .vagrant
 config.yaml
 .pe_build
+*.gem
+**/.DS_Store
