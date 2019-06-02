@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+0.5.6
+-----
+
+2019-06-02
+
+This is a backwards compatible update.
+
+  * Update vagrant-pe_build dependency to 0.19.0 or newer to support
+    PE 2019.1, Ubuntu 18.04, and RedHat 8.
+
+
 0.5.5
 -----
 
