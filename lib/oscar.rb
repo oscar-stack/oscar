@@ -3,6 +3,8 @@ module Oscar
   require 'vagrant-pe_build'
   require 'vagrant-auto_network'
   require 'vagrant-config_builder'
+  require 'rubygems/requirement'
+  require 'vagrant-bolt' if Gem::Requirement.new('>= 2.2.0').satisfied_by?(Gem::Version.new(Vagrant::VERSION))
 
   require 'oscar/version'
   require 'oscar/plugin'

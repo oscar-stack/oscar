@@ -23,6 +23,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'vagrant-pe_build',       '>= 0.19.0', '< 1.0'
   gem.add_dependency 'vagrant-auto_network',   '~> 1.0'
   gem.add_dependency 'vagrant-config_builder', '~> 1.3'
+  gem.add_dependency 'vagrant-bolt',           '~> 0.1'
 
   gem.files        = %x{git ls-files -z}.split("\0")
   gem.require_path = 'lib'
