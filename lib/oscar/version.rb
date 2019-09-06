@@ -1,3 +1,3 @@
 module Oscar
-  VERSION = '0.5.6'.freeze
+  VERSION = '0.6.0'.freeze
 end

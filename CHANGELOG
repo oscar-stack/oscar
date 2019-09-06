@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+0.6.0
+-----
+
+2019-09-05
+
+This is a backwards compatible update.
+
+  * Add a dependency on vagrant-bolt 0.1.x. Only used for Vagrant 2.2 or newer.
+
+  * Update vagrant-hosts dependency to 2.9.x
+
+
 0.5.6
 -----
 
